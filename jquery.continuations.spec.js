@@ -329,3 +329,37 @@ describe('Integrated payload policy tests', function () {
         });
     });
 });
+
+describe('Integrated correlatedSubmit tests', function () {
+	var server;
+    beforeEach(function () {
+        server = sinon.fakeServer.create();
+    });
+    afterEach(function () {
+        server.restore();
+    });
+	
+	it('should correlate the request via the id of the form', function() {
+		var form = $('<form id="mainForm" action="/correlate" method="post"></form>');
+        var id = '';
+		amplify.subscribe('AjaxStarted', function(request) {
+			server.respondWith([200,
+				{ 'Content-Type': 'application/json', 'X-Correlation-Id': request.correlationId}, '{"success":"true"}'
+			]);
+		});
+        amplify.subscribe('AjaxCompleted', function (response) {
+            id = response.correlationId;
+        });
+
+        runs(function () {
+            form.correlatedSubmit();
+			server.respond();
+        });
+
+        waits(500);
+
+        runs(function () {
+            expect(id).toEqual('mainForm');
+        });
+	});
+});

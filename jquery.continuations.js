@@ -30,7 +30,6 @@
 
     var errorPolicy = function () {
         this.matches = function (continuation) {
-            console.log(continuation);
             return continuation.errors && continuation.errors.length != 0;
         };
         this.execute = function (continuation) {
@@ -145,4 +144,23 @@
 
     // Make it global
     $.continuations = module;
+	
+	$.fn.correlatedSubmit = function (options) {
+		if (!this.length) {
+			return this;
+		}
+
+		var id = this.attr('id');
+		if (!id) {
+			id = 'form_' + new Date().getTime().toString();
+			$(this).attr('id', id);
+		}
+		
+		this.ajaxSubmit({
+			beforeSend: function (xhr) {
+				this.correlationId = id;
+				$.continuations.setupRequest.call(this, xhr);
+			}
+		});
+	};
 } (jQuery));
