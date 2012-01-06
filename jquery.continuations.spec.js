@@ -363,3 +363,18 @@ describe('Integrated correlatedSubmit tests', function () {
         });
 	});
 });
+
+describe('Custom policy tests', function () {
+	it('should call custom policy', function() {
+		var invoked = false;
+		var customPolicy = {
+			matches: function(continuation) { return true; },
+			execute: function(continuation) { invoked = true; }
+		};
+		
+		$.continuations.applyPolicy(customPolicy);
+		$.continuations.process({ success: true });
+		
+		expect(invoked).toEqual(true);
+	});
+});

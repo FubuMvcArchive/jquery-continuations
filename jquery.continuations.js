@@ -1,4 +1,11 @@
-﻿(function ($, aggregator) {
+﻿// jquery.continuations v0.1.0
+//
+// Copyright (C)2011 Joshua Arnold, Jeremy Miller
+// Distributed Under Apache License, Version 2.0
+//
+// https://github.com/DarthFubuMVC/jquery-continuations
+
+(function ($, aggregator) {
 
     "use strict";
 
@@ -146,21 +153,20 @@
     $.continuations = module;
 	
 	$.fn.correlatedSubmit = function (options) {
-		if (!this.length) {
-			return this;
-		}
-
-		var id = this.attr('id');
-		if (!id) {
-			id = 'form_' + new Date().getTime().toString();
-			$(this).attr('id', id);
-		}
-		
-		this.ajaxSubmit({
-			beforeSend: function (xhr) {
-				this.correlationId = id;
-				$.continuations.setupRequest.call(this, xhr);
+		return this.each(function() {
+			var self = $(this);
+			var id = self.attr('id');
+			if (!id) {
+				id = 'form_' + new Date().getTime().toString();
+				self.attr('id', id);
 			}
+			
+			self.ajaxSubmit({
+				beforeSend: function (xhr) {
+					this.correlationId = id;
+					$.continuations.setupRequest.call(this, xhr);
+				}
+			});
 		});
 	};
 } (jQuery));
