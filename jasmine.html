@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html;charset=UTF-8" http-equiv="Content-Type" />
+    <title>Jasmine suite | jQuery.continuations</title>
+    <link rel="stylesheet" href="jasmine.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="scripts/jasmine.js"></script>
+    <script type="text/javascript" src="scripts/jasmine-html.js"></script>
+    <script type="text/javascript" src="scripts/jquery-1.6.2.js"></script>
+    <script type="text/javascript" src="scripts/sinon-1.2.0.js"></script>
+    <script type="text/javascript" src="scripts/amplify.core.min.js"></script>
+    <script type="text/javascript">
+        var jsApiReporter;
+        (function () {
+            var jasmineEnv = jasmine.getEnv();
+
+            jsApiReporter = new jasmine.JsApiReporter();
+            var trivialReporter = new jasmine.TrivialReporter();
+
+            jasmineEnv.addReporter(jsApiReporter);
+            jasmineEnv.addReporter(trivialReporter);
+
+            jasmineEnv.specFilter = function (spec) {
+                return trivialReporter.specFilter(spec);
+            };
+
+            var currentWindowOnload = window.onload;
+
+            window.onload = function () {
+                if (currentWindowOnload) {
+                    currentWindowOnload();
+                }
+                execJasmine();
+            };
+
+            function execJasmine() {
+                jasmineEnv.execute();
+            }
+
+        })();
+    </script>
+    <script type="text/javascript" src="jquery.continuations.js"></script>
+    <script type="text/javascript" src="jquery.continuations.spec.js"></script>
+</head>
+<body>
+    <div id="jasmine_content">
+    </div>
+</body>
+</html>
