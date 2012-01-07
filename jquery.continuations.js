@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.1.0
+﻿// jquery.continuations v0.1.1
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -142,7 +142,10 @@
     continuations.prototype.eventAggregator = {
         publish: function (topic, payload) {
             // no-op
-        }
+        },
+		subscribe: function(topic, context, callback) {
+			// no-op
+		}
     };
 
     var module = new continuations();
