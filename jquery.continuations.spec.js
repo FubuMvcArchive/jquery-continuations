@@ -1,7 +1,4 @@
-﻿// These tests prove that this can be swapped out
-$.continuations.useAmplify();
-
-describe('Global jQuery conventions', function () {
+﻿describe('Global jQuery conventions', function () {
     // these should prove to be beneficial for showing loading animations
     it('should publish the AjaxStarted topic when a request starts', function () {
         var invoked = false;

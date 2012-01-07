@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.1.1
+﻿// jquery.continuations v0.1.2
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -154,6 +154,7 @@
 
     // Make it global
     $.continuations = module;
+	$.continuations.useAmplify();
 	
 	$.fn.correlatedSubmit = function (options) {
 		return this.each(function() {
