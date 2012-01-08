@@ -375,3 +375,41 @@ describe('Custom policy tests', function () {
 		expect(invoked).toEqual(true);
 	});
 });
+
+describe('End to end custom continuation tests', function() {
+	var theContinuation;
+	var server;
+	beforeEach(function() {
+		theContinuation = {
+			customProperty: 'Test'
+		};
+		server = sinon.fakeServer.create();
+	});
+	afterEach(function () {
+        server.restore();
+    });
+	
+	it('should invoke custom policy for custom property', function() {
+		var builder = function() { return JSON.stringify(theContinuation) };
+		amplify.subscribe('AjaxStarted', function(request) {
+			server.respondWith([200,
+				{ 'Content-Type': 'application/json', 'X-Correlation-Id': request.correlationId}, builder()
+			]);
+		});
+		var invoked = false;
+		runs(function() {
+			$.continuations.applyPolicy({
+				matches: function(continuation) { return continuation.customProperty == 'Test'; },
+				execute: function() { invoked = true; }
+			});
+			$.ajax({ url: '/customprop' });
+			server.respond();
+		});
+		
+		waits(500);
+		
+		runs(function() {
+			expect(invoked).toEqual(true);
+		});
+	});
+});

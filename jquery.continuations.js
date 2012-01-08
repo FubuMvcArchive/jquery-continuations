@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.1.2
+﻿// jquery.continuations v0.1.3
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -16,6 +16,13 @@
 
     var CORRELATION_ID = 'X-Correlation-Id';
     var policies = [];
+	
+	var theContinuation = function() { };
+	theContinuation.prototype = {
+		success: false,
+		errors: [],
+		refresh: false
+	};
 
     var refreshPolicy = function () {
         this.matches = function (continuation) {
@@ -113,6 +120,8 @@
             return this;
         },
         process: function (continuation) {
+			var standardContinuation = new $.continuations.continuation();
+			continuation = $.extend(standardContinuation, continuation);
             var matchingPolicies = [];
             for (var i = 0; i < policies.length; ++i) {
                 var p = policies[i];
@@ -155,6 +164,7 @@
     // Make it global
     $.continuations = module;
 	$.continuations.useAmplify();
+	$.continuations.continuation = theContinuation;
 	
 	$.fn.correlatedSubmit = function (options) {
 		return this.each(function() {
