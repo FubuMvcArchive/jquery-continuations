@@ -1,18 +1,18 @@
 # jQuery.continutions
 
-### Overview
+## Overview
 
-jQuery.continuations provides a standarized way of processing Ajax responses via the continuation object. The idea is that for most cases,
+jQuery.continuations provides a standarized way of processing Ajax responses via [the Continuation object](https://github.com/DarthFubuMVC/jquery-continuations/wiki/Continuation-object). The idea is that for most cases,
 your server side code will be generated responses that are similar in structure and you want to build a conventional approach to processing those requests.
 
-### How it works
+## How it works
 
 jQuery.continuations hooks into jQuery via the $.ajaxSetup method and provides a global success callback. The callback that is registered kicks off the
 $.continuations.process pipeline.
 
-### Processing pipeline
+## Processing pipeline
 
-The processing pipeline is orchestrated through continuation policies. jQuery.continuations comes with several policies that are registered by default:
+The processing pipeline is orchestrated through [continuation policies](https://github.com/DarthFubuMVC/jquery-continuations/wiki/Continuation-policy). jQuery.continuations comes with several policies that are registered by default:
 
 **errorPolicy**
 
@@ -38,7 +38,7 @@ Navigates the window to the specified url
 
 Publishes the specified topic and payload through amplifyjs
 
-### Request Correlation
+## Request Correlation
 
 Before each request is initiated, a custom header is appended (X-Correlation-Id). This value originates from one of two sources: 1) randomly assigned for a request 2) the id of the form responsible for the request.
 
@@ -48,8 +48,16 @@ Assuming that you are sending the header back down through your response, jquery
 
 **The AjaxCompleted topic**
 
-This topic is published through the jquery.continuations event aggregator façade (we use amplify). The message that is published contains a correlationId property with the appropriate value.
+This topic is published through the jquery.continuations event aggregator facade (we use amplify). The message that is published contains a correlationId property with the appropriate value.
 
 **The continuation processing pipeline**
 
 Before the continuation is processed, the correlationId property is set.
+
+> jQuery.continuations also integrates with jquery.form by providing a correlatedSubmit method to any form ($('#myForm').correlatedSubmit())
+
+## Custom Policies
+
+An example of how to register a custom policy:
+
+> $.continuations.applyPolicy({ custom policy... })
