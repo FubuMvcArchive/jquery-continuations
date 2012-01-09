@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.1.3
+﻿// jquery.continuations v0.1.4
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -26,7 +26,7 @@
 
     var refreshPolicy = function () {
         this.matches = function (continuation) {
-            return continuation.refresh === 'true';
+            return continuation.refresh && continuation.refresh.toString() === 'true';
         };
         this.execute = function (continuation) {
             $.continuations.windowService.refresh();
