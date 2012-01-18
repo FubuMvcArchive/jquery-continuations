@@ -359,6 +359,68 @@ describe('Integrated correlatedSubmit tests', function () {
             expect(id).toEqual('mainForm');
         });
 	});
+	
+	it('should correlate the request via the specified correlation id', function() {
+		var form = $('<form id="mainForm" action="/correlate" method="post"></form>');
+		var id = '';
+		amplify.subscribe('AjaxStarted', function(request) {
+			server.respondWith([200,
+				{ 'Content-Type': 'application/json', 'X-Correlation-Id': request.correlationId}, '{"success":"true"}'
+			]);
+		});
+        amplify.subscribe('AjaxCompleted', function (response) {
+            id = response.correlationId;
+        });
+
+        runs(function () {
+            form.correlatedSubmit({
+				correlationId: '123'
+			});
+			server.respond();
+        });
+
+        waits(500);
+
+        runs(function () {
+            expect(id).toEqual('123');
+        });
+	});
+});
+
+describe('Integrated correlatedAjax tests', function () {
+	var server;
+    beforeEach(function () {
+        server = sinon.fakeServer.create();
+    });
+    afterEach(function () {
+        server.restore();
+    });
+	
+	it('should correlate the request via the specified correlation id', function() {
+		var id = '';
+		amplify.subscribe('AjaxStarted', function(request) {
+			server.respondWith([200,
+				{ 'Content-Type': 'application/json', 'X-Correlation-Id': request.correlationId}, '{"success":"true"}'
+			]);
+		});
+        amplify.subscribe('AjaxCompleted', function (response) {
+            id = response.correlationId;
+        });
+
+        runs(function () {
+            $.ajax({
+				url: '/test',
+				correlationId: '123'
+			});
+			server.respond();
+        });
+
+        waits(500);
+
+        runs(function () {
+            expect(id).toEqual('123');
+        });
+	});
 });
 
 describe('Custom policy tests', function () {

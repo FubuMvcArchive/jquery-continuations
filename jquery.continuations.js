@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.1.4
+﻿// jquery.continuations v0.1.5
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -79,8 +79,8 @@
                         response: jqXHR
                     });
                 },
-                beforeSend: function (xhr) {
-                    self.setupRequest(xhr);
+                beforeSend: function (xhr, settings) {
+                    self.setupRequest(xhr, settings);
                 }
             });
 
@@ -105,9 +105,9 @@
         },
         // Keep this public for form correlation
         setupRequest: function (xhr, settings) {
-            // this could come from $.ajaxSubmit
-            var id = this.correlationId;
-            if (!id) {
+            // this could come from the ajax options
+            var id = settings.correlationId;
+            if (typeof(id) === 'undefined') {
                 id = new Date().getTime().toString();
             }
             xhr.setRequestHeader(CORRELATION_ID, id);
@@ -167,20 +167,26 @@
 	$.continuations.continuation = theContinuation;
 	
 	$.fn.correlatedSubmit = function (options) {
-		return this.each(function() {
-			var self = $(this);
-			var id = self.attr('id');
-			if (!id) {
-				id = 'form_' + new Date().getTime().toString();
-				self.attr('id', id);
-			}
-			
-			self.ajaxSubmit({
-				beforeSend: function (xhr) {
-					this.correlationId = id;
-					$.continuations.setupRequest.call(this, xhr);
-				}
-			});
-		});
-	};
+		if(typeof(options) === 'undefined') {
+			options = {};
+		}
+		
+        return this.each(function () {
+            var self = $(this);
+            var correlationId = options.correlationId;
+            if (typeof(correlationId) === 'undefined') {
+                var id = self.attr('id');
+                if (!id) {
+                    id = 'form_' + new Date().getTime().toString();
+                    self.attr('id', id);
+                }
+
+                correlationId = id;
+            }
+
+            self.ajaxSubmit({
+               correlationId: correlationId
+            });
+        });
+    };
 } (jQuery));
