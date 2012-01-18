@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.1.6
+﻿// jquery.continuations v0.2.7
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -23,8 +23,13 @@
         errors: [],
         refresh: false,
         correlationId: null,
+		matchOnProperty: function(prop, predicate) {
+			return typeof(this[prop]) !== 'undefined' && predicate(this[prop]);
+		},
         isCorrelated: function () {
-            return typeof(this.correlationId) !== 'undefined' && this.correlationId != null;
+			return this.matchOnProperty('correlationId', function(id) {
+				return id != null;
+			});
         }
     };
 
@@ -189,7 +194,15 @@
             }
 
             self.ajaxSubmit({
-               correlationId: correlationId
+				correlationId: correlationId,
+				success: function (continuation, status, jqXHR) {
+					continuation.form = self;
+                    $.continuations.onSuccess({
+                        continuation: continuation,
+                        status: status,
+                        response: jqXHR
+                    });
+				}
             });
         });
     };

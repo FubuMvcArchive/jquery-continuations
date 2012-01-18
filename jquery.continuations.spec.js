@@ -336,6 +336,39 @@ describe('Integrated correlatedSubmit tests', function () {
         server.restore();
     });
 	
+	it('should set form on the continuation', function() {
+		var form = $('<form id="mainForm" action="/correlate" method="post"></form>');
+        var id = '';
+		
+		amplify.subscribe('AjaxStarted', function(request) {
+			server.respondWith([200,
+				{ 'Content-Type': 'application/json', 'X-Correlation-Id': request.correlationId}, '{"success":"true"}'
+			]);
+		});
+		
+		$.continuations.applyPolicy({
+			matches: function(continuation) {
+				return continuation.matchOnProperty('form', function(form) {
+					return form.size() != 0;
+				});
+			},
+			execute: function(continuation) {
+				id = continuation.form.attr('id');
+			}
+		});
+
+        runs(function () {
+            form.correlatedSubmit();
+			server.respond();
+        });
+
+        waits(500);
+
+        runs(function () {
+            expect(id).toEqual('mainForm');
+        });
+	});
+	
 	it('should correlate the request via the id of the form', function() {
 		var form = $('<form id="mainForm" action="/correlate" method="post"></form>');
         var id = '';
