@@ -475,3 +475,19 @@ describe('End to end custom continuation tests', function() {
 		});
 	});
 });
+
+describe('continuation tester', function() {
+	var theContinuation;
+	beforeEach(function() {
+		theContinuation = new $.continuations.continuation();
+	});
+	
+	it('should not be correlated if the correlation id is not set', function() {
+		expect(theContinuation.isCorrelated()).toEqual(false);
+	});
+	
+	it('should be correlated if the correlation id is set', function() {
+		theContinuation.correlationId = '123';
+		expect(theContinuation.isCorrelated()).toEqual(true);
+	});
+});
