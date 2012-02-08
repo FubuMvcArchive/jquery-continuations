@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.2.7
+﻿// jquery.continuations v0.3.8
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -23,6 +23,7 @@
         errors: [],
         refresh: false,
         correlationId: null,
+		options: {},
 		matchOnProperty: function(prop, predicate) {
 			return typeof(this[prop]) !== 'undefined' && predicate(this[prop]);
 		},
@@ -82,8 +83,17 @@
             $.ajaxSetup({
                 cache: false,
                 success: function (continuation, status, jqXHR) {
+					var options = this.options;
+					if(typeof(options) === 'undefined') {
+						options = {};
+					}
+					if(typeof(continuation) !== 'undefined') {
+						continuation.options = options;
+					}
+					
                     self.onSuccess({
                         continuation: continuation,
+						callback: this.continuationSuccess,
                         status: status,
                         response: jqXHR
                     });
@@ -109,6 +119,10 @@
 
             var continuation = msg.continuation;
             continuation.correlationId = msg.response.getResponseHeader('X-Correlation-Id');
+			
+			if($.isFunction(msg.callback)) {
+				msg.callback(continuation);
+			}
 
             this.process(continuation);
         },
@@ -128,6 +142,11 @@
             policies.push(policy);
             return this;
         },
+		// Mostly for testing
+		reset: function() {
+			policies.length = 0;
+			this.setupDefaults();
+		},
         process: function (continuation) {
 			var standardContinuation = new $.continuations.continuation();
 			continuation = $.extend(standardContinuation, continuation);
@@ -195,13 +214,13 @@
 
             self.ajaxSubmit({
 				correlationId: correlationId,
-				success: function (continuation, status, jqXHR) {
+				continuationSuccess: function(continuation) {
 					continuation.form = self;
-                    $.continuations.onSuccess({
-                        continuation: continuation,
-                        status: status,
-                        response: jqXHR
-                    });
+					continuation.options = options;
+					
+					if($.isFunction(options.continuationSuccess)) {
+						options.continuationSuccess(continuation);
+					}
 				}
             });
         });

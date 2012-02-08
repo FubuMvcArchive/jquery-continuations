@@ -482,6 +482,7 @@ describe('End to end custom continuation tests', function() {
 	});
 	afterEach(function () {
         server.restore();
+		$.continuations.reset();
     });
 	
 	it('should invoke custom policy for custom property', function() {
@@ -498,6 +499,117 @@ describe('End to end custom continuation tests', function() {
 				execute: function() { invoked = true; }
 			});
 			$.ajax({ url: '/customprop' });
+			server.respond();
+		});
+		
+		waits(500);
+		
+		runs(function() {
+			expect(invoked).toEqual(true);
+		});
+	});
+});
+
+describe('Custom options tester', function() {
+	var server;
+	var continuationBuilder;
+	beforeEach(function() {
+		server = sinon.fakeServer.create();
+		continuationBuilder = function() { return JSON.stringify({}) };
+	});
+	afterEach(function () {
+        server.restore();
+		$.continuations.reset();
+    });
+	
+	it('should persist options passed to ajax', function() {
+		amplify.subscribe('AjaxStarted', function(request) {
+			server.respondWith([200, { 
+					'Content-Type': 'application/json', 
+					'X-Correlation-Id': request.correlationId
+				}, continuationBuilder()
+			]);
+		});
+		var invoked = false;
+		runs(function() {
+			$.continuations.applyPolicy({
+				matches: function(continuation) { return continuation.options.customProperty == 'some random value'; },
+				execute: function() { invoked = true; }
+			});
+			$.ajax({ 
+				url: '/custom-options',
+				options: {
+					customProperty: 'some random value'
+				}
+			});
+			server.respond();
+		});
+		
+		waits(500);
+		
+		runs(function() {
+			expect(invoked).toEqual(true);
+		});
+	});
+	
+	it('should persist options passed to correlatedSubmit', function() {
+		amplify.subscribe('AjaxStarted', function(request) {
+			server.respondWith([200, { 
+					'Content-Type': 'application/json', 
+					'X-Correlation-Id': request.correlationId
+				}, continuationBuilder()
+			]);
+		});
+		var invoked = false;
+		runs(function() {
+			$.continuations.applyPolicy({
+				matches: function(continuation) { return continuation.options.customProperty == 'some random value'; },
+				execute: function() { invoked = true; }
+			});
+			
+			var form = $('<form id="mainForm" action="/correlate" method="post"></form>');
+			form.correlatedSubmit({
+				customProperty: 'some random value'
+			});
+			server.respond();
+		});
+		
+		waits(500);
+		
+		runs(function() {
+			expect(invoked).toEqual(true);
+		});
+	});
+});
+
+describe('integrated success callback tests', function() {
+	var server;
+	var continuationBuilder;
+	beforeEach(function() {
+		server = sinon.fakeServer.create();
+		continuationBuilder = function() { return JSON.stringify({}) };
+	});
+	afterEach(function () {
+        server.restore();
+		$.continuations.reset();
+    });
+	
+	it('should invoke success callback from correlatedSubmit', function() {
+		amplify.subscribe('AjaxStarted', function(request) {
+			server.respondWith([200, { 
+					'Content-Type': 'application/json', 
+					'X-Correlation-Id': request.correlationId
+				}, continuationBuilder()
+			]);
+		});
+		var invoked = false;
+		runs(function() {
+			var form = $('<form id="mainForm" action="/correlate" method="post"></form>');
+			form.correlatedSubmit({
+				continuationSuccess: function(continuation) {
+					invoked = true;
+				}
+			});
 			server.respond();
 		});
 		
