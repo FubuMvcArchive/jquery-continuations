@@ -148,7 +148,7 @@
 			this.setupDefaults();
 		},
         process: function (continuation) {
-			var standardContinuation = new $.continuations.continuation();
+			var standardContinuation = new theContinuation();
 			continuation = $.extend(standardContinuation, continuation);
             var matchingPolicies = [];
             for (var i = 0; i < policies.length; ++i) {
