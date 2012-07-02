@@ -24,7 +24,7 @@ buildsupportfiles.each { |ext| load ext }
 props = { :artifacts => File.expand_path("artifacts") }
 
 desc "**Default**"
-task :default => [:restore_if_missing, :run]
+task :default => [:run]
 
 desc "Prepares the working directory for a new build"
 task :clean => [:update_buildsupport] do
@@ -40,7 +40,7 @@ task :open do
 end
 
 desc "Runs the Jasmine tests"
-task :run do
+task :run => [:restore_if_missing] do
 	serenity "jasmine run --timeout 30 src/serenity.txt"
 end
 
