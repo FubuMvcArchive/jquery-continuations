@@ -45,7 +45,7 @@ task :run => [:restore_if_missing] do
 end
 
 desc "Runs the Jasmine tests and outputs the results for TC"
-task :ci => [:clean] do
+task :ci => [:clean, :restore_if_missing] do
     serenity "jasmine run --verbose --timeout 30 src/serenity.txt"
     copyOutputFiles "src/jquery.continuations/content/scripts", "jquery.continuations.*", props[:artifacts]
 end
