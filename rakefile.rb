@@ -13,7 +13,7 @@ buildsupportfiles.each { |ext| load ext }
 props = { :stage => File.expand_path("build"), :artifacts => File.expand_path("artifacts") }
 
 desc "**Default**"
-task :default => [:restore_if_missing, :open_jasmine]
+task :default => [:restore_if_missing, :run_jasmine]
 
 desc "Opens the Serenity Jasmine Runner in interactive mode"
 task :open_jasmine => [:enable_jasmine_coffee] do

@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.4.9
+﻿// jquery.continuations v0.5.10
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -51,6 +51,18 @@
             $.continuations.windowService.navigateTo(continuation.navigatePage);
         };
     };
+    
+    var redirectPolicy = function () {
+        this.matches = function (continuation) {
+            // TODO -- Harden this against the proper statuses
+            return continuation.matchOnProperty('statusCode', function(c) { return c != 200; })
+                && continuation.matchOnProperty('response', function(r) { return r.getResponseHeader('Location'); });
+        };
+        this.execute = function (continuation) {
+            var url = continuation.response.getResponseHeader('Location');
+            $.continuations.windowService.navigateTo(url);
+        };
+    };
 
     var errorPolicy = function () {
         this.matches = function (continuation) {
@@ -58,6 +70,15 @@
         };
         this.execute = function (continuation) {
             $.continuations.trigger('ContinuationError', continuation);
+        };
+    };
+    
+    var httpErrorPolicy = function () {
+        this.matches = function (continuation) {
+            return continuation.matchOnProperty('statusCode', function(code) { return code != 200; });
+        };
+        this.execute = function (continuation) {
+            $.continuations.trigger('HttpError', continuation);
         };
     };
 
@@ -110,6 +131,9 @@
                         response: jqXHR
                     });
                 },
+                error: function(xhr, text, error) {
+                    self.onError(xhr, text, error);
+                },
                 beforeSend: function (xhr, settings) {
                     self.setupRequest(xhr, settings);
                 }
@@ -120,7 +144,26 @@
         setupDefaults: function () {
             this.applyPolicy(new refreshPolicy());
             this.applyPolicy(new navigatePolicy());
+            this.applyPolicy(new redirectPolicy());
             this.applyPolicy(new errorPolicy());
+            this.applyPolicy(new httpErrorPolicy());
+        },
+        onError: function(xhr, text, error) {
+            var continuation = this.buildError(xhr, text, error);
+            this.process(continuation);
+        },
+        buildError: function(response, text, error) {
+            var continuation = new $.continuations.continuation();
+            continuation.success = false;
+            
+            if (response.getResponseHeader('Content-Type').indexOf('json') != -1) {
+                continuation = JSON.parse(response.responseText);
+            }
+            
+            continuation.response = response;
+            continuation.statusCode = response.status;
+            
+            return continuation;
         },
         onSuccess: function (msg) {
             var contentType = msg.response.getResponseHeader('Content-Type');

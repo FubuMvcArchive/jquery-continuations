@@ -12,7 +12,7 @@
             });
 
             $.ajax({
-                url: '', // should request the current page
+                url: '',
                 type: 'get'
             });
         });
@@ -32,7 +32,7 @@
             });
 
             $.ajax({
-                url: '', // should request the current page
+                url: '',
                 type: 'get'
             });
         });
@@ -59,21 +59,23 @@ describe('Request correlation', function () {
         var startingId = '';
         var completedId = '';
 
-        $.continuations.bind('AjaxStarted', function (request) {
-            startingId = request.correlationId;
-            // if it hangs, we never got the topic
-            server.respondWith([200,
-                { 'Content-Type': 'application/json', 'X-Correlation-Id': startingId }, '{success: true}'
-            ]);
-        });
-
-        $.continuations.bind('AjaxCompleted', function (response) {
-            completedId = response.correlationId;
-        });
-
         runs(function () {
+            $.continuations.bind('AjaxStarted', function (request) {
+                startingId = request.correlationId;
+                // if it hangs, we never got the topic
+                server.respondWith([200,
+                    { 'Content-Type': 'application/json', 'X-Correlation-Id': startingId }, '{"success":"true"}'
+                ]);
+            });
+
+            $.continuations.bind('AjaxCompleted', function (response) {
+                completedId = response.correlationId;
+            });
+        
             $.ajax({
-                url: '/testing'
+                url: '/testing',
+                dataType: 'json',
+                type: 'get'
             });
 
             server.respond();
@@ -266,6 +268,121 @@ describe('Integrated error policy tests', function () {
 
         runs(function () {
             expect(invoked).toEqual(false);
+        });
+    });
+});
+
+describe('Integrated http error policy tests', function () {
+    var theServer;
+    beforeEach(function () {
+        theServer = sinon.fakeServer.create();
+    });
+    afterEach(function () {
+        theServer.restore();
+    });
+
+    it('publishes the HttpError topic when an http error occurs', function () {
+        theServer.respondWith([500, { 'Content-Type': 'text/html', 'X-Correlation-Id': '1234' }, '<html></html>' ]);
+
+        var invoked = false;
+        $.continuations.bind('HttpError', function (continuation) {
+            invoked = true;
+        });
+
+        runs(function () {
+            $.ajax({
+                url: '/errors',
+                dataType: 'json',
+                type: 'get'
+            });
+            theServer.respond();
+        });
+
+        waits(500);
+
+        runs(function () {
+            expect(invoked).toEqual(true);
+        });
+    });
+
+    it('does not publish the HttpError topic when no http errors occur', function () {
+        theServer.respondWith([200, { 'Content-Type': 'text/html', 'X-Correlation-Id': '1234' }, '<html></html>' ]);
+
+        var invoked = false;
+        $.continuations.bind('HttpError', function (continuation) {
+            invoked = true;
+        });
+
+        runs(function () {
+            $.ajax({
+                url: '/errors',
+                dataType: 'json',
+                type: 'get'
+            });
+            theServer.respond();
+        });
+
+        waits(500);
+
+        runs(function () {
+            expect(invoked).toEqual(false);
+        });
+    });
+});
+
+describe('Integrated redirect policy tests', function() {
+    var server;
+    var navigate;
+    beforeEach(function() {
+        server = sinon.fakeServer.create();
+        navigate = $.continuations.windowService.navigateTo;
+    });
+    afterEach(function() {
+        server.restore();
+        $.continuations.windowService.navigateTo = navigate;
+    });
+
+    it('should navigate to url', function () {
+        var url = 'http://www.google.com';
+        $.continuations.windowService.navigateTo = jasmine.createSpy('windowService.navigateTo');
+
+        server.respondWith([301, { 'Content-Type': 'text/html', 'Location': url}, '' ]);
+
+        runs(function () {
+            $.ajax({
+                url: '/navigate',
+                dataType: 'json',
+                type: 'get'
+            });
+            server.respond();
+        });
+
+        waits(500);
+
+        runs(function () {
+            expect($.continuations.windowService.navigateTo).toHaveBeenCalledWith(url);
+        });
+    });
+
+    it('should not navigate to url when not specified', function () {
+        var url = 'http://www.google.com';
+        $.continuations.windowService.navigateTo = jasmine.createSpy('windowService.navigateTo');
+
+        server.respondWith([200, { 'Content-Type': 'application/json' }, '{"success": "true"}' ]);
+
+        runs(function () {
+            $.ajax({
+                url: '/navigate',
+                dataType: 'json',
+                type: 'get'
+            });
+            server.respond();
+        });
+
+        waits(500);
+
+        runs(function () {
+            expect($.continuations.windowService.navigateTo).not.toHaveBeenCalled();
         });
     });
 });
@@ -580,4 +697,125 @@ describe('continuation tester', function() {
 		theContinuation.correlationId = '123';
 		expect(theContinuation.isCorrelated()).toEqual(true);
 	});
+});
+
+// And now for the error handling
+describe('Global error handling', function() {
+    var theServer;
+    var theStatusCode;
+    var theContinuation;
+    var theResponse;
+    var theOriginal;
+	beforeEach(function() {
+		theStatusCode = 500;
+        theServer = sinon.fakeServer.create();
+		theServer.respondWith([theStatusCode, { 'Content-Type': 'text/html', 'X-Correlation-Id': '1234' }, '' ]);
+        
+        theContinuation = new $.continuations.continuation();
+        theContinuation.statusCode = theStatusCode;
+        
+        theOriginal = $.continuations.buildError;
+        $.continuations.buildError = sinon.spy(function(response) {
+            theResponse = response;
+            return theContinuation;
+        });
+        
+        sinon.stub($.continuations, 'process');
+        
+        runs(function() {
+            $.ajax();
+            theServer.respond();
+        });
+        
+        waits(500);
+	});
+	afterEach(function () {
+        theServer.restore();
+        $.continuations.buildError = theOriginal;
+        $.continuations.process.restore();
+		$.continuations.reset();
+    });
+    
+    it('builds the error continuation', function() {
+        expect($.continuations.buildError.called).toEqual(true);
+        expect(theResponse.status).toEqual(theStatusCode);
+    });
+    
+    it('processes the errors', function() {
+        expect($.continuations.process.called).toEqual(true);
+        var response = $.continuations.process.getCall(0).args[0];
+        expect(response.statusCode).toEqual(theStatusCode);
+    });
+});
+
+describe('when building an error continuation for a response that is not json', function() {
+    var theServer;
+    var theStatusCode;
+    var theContinuation;
+    
+	beforeEach(function() {
+		theStatusCode = 501;
+        theServer = sinon.fakeServer.create();
+		theServer.respondWith([theStatusCode, { 'Content-Type': 'text/html', 'X-Correlation-Id': '1234' }, '<html></html>' ]);
+        
+        sinon.stub($.continuations, 'process');
+        
+        $.ajax();
+        theServer.respond();
+        theContinuation = $.continuations.process.getCall(0).args[0];
+	});
+	afterEach(function () {
+        theServer.restore();
+        $.continuations.process.restore();
+		$.continuations.reset();
+    });
+    
+    it('sets the status code', function() {
+        expect(theContinuation.statusCode).toEqual(theStatusCode);
+    });
+    
+    it('sets the success flag', function() {
+        expect(theContinuation.success).toEqual(false);
+    });
+    
+    it('sets the response', function() {
+        expect(theContinuation.response.getResponseHeader('Content-Type')).toEqual('text/html');
+    });
+});
+
+describe('when building an error continuation for a response that is json', function() {
+    var theServer;
+    var theStatusCode;
+    var theServerContinuation;
+    var theContinuation;
+    
+	beforeEach(function() {
+		theStatusCode = 501;
+        
+        theServerContinuation = new $.continuations.continuation();
+        theServerContinuation.customProperty = 'Hello';
+        var builder = function() { return JSON.stringify(theServerContinuation) };
+        
+        theServer = sinon.fakeServer.create();
+        theServer.respondWith([theStatusCode, { 'Content-Type': 'application/json', 'X-Correlation-Id': '1234'}, builder() ]);
+
+        sinon.stub($.continuations, 'process');
+        
+        $.ajax();
+        theServer.respond();
+        theContinuation = $.continuations.process.getCall(0).args[0];
+	});
+	afterEach(function () {
+        theServer.restore();
+        $.continuations.process.restore();
+		$.continuations.reset();
+    });
+    
+    it('uses the continuation from the response', function() {
+        expect(theContinuation.customProperty).toEqual(theServerContinuation.customProperty);
+    });
+
+    it('sets the response', function() {
+        expect(theContinuation.response.getResponseHeader('Content-Type')).toEqual('application/json');
+    });
 });
