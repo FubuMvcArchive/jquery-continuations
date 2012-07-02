@@ -1,28 +1,53 @@
 COMPILE_TARGET = ENV['config'].nil? ? "debug" : ENV['config']
 
+buildsupportfiles = Dir["#{File.dirname(__FILE__)}/buildsupport/*.rb"]
+
+if( ! buildsupportfiles.any? )
+  # no buildsupport, let's go get it for them.
+  sh 'git submodule update --init' unless buildsupportfiles.any?
+  buildsupportfiles = Dir["#{File.dirname(__FILE__)}/buildsupport/*.rb"]
+end
+
+# nope, we still don't have buildsupport. Something went wrong.
+raise "Run `git submodule update --init` to populate your buildsupport folder." unless buildsupportfiles.any?
+
 include FileTest
 require 'albacore'
 
 PRODUCT = "jquery.continuations"
-COPYRIGHT = 'Copyright jquery.continuations. All rights reserved.';
+COPYRIGHT = 'Copyright 2012 Joshua Arnold. All rights reserved.';
 
 buildsupportfiles = Dir["#{File.dirname(__FILE__)}/buildsupport/*.rb"]
 raise "Run `git submodule update --init` to populate your buildsupport folder." unless buildsupportfiles.any?
 buildsupportfiles.each { |ext| load ext }
 
-props = { :stage => File.expand_path("build"), :artifacts => File.expand_path("artifacts") }
+props = { :artifacts => File.expand_path("artifacts") }
 
 desc "**Default**"
-task :default => [:restore_if_missing, :run_jasmine]
+task :default => [:restore_if_missing, :run]
+
+desc "Prepares the working directory for a new build"
+task :clean => [:update_buildsupport] do
+	FileUtils.rm_rf props[:artifacts]
+    # work around nasty latency issue where folder still exists for a short while after it is removed
+    waitfor { !exists?(props[:artifacts]) }
+	Dir.mkdir props[:artifacts]
+end
 
 desc "Opens the Serenity Jasmine Runner in interactive mode"
-task :open_jasmine => [:enable_jasmine_coffee] do
+task :open do
 	serenity "jasmine interactive src/serenity.txt"
 end
 
 desc "Runs the Jasmine tests"
-task :run_jasmine => [:enable_jasmine_coffee] do
-	serenity "jasmine run src/serenity.txt"
+task :run do
+	serenity "jasmine run --timeout 30 src/serenity.txt"
+end
+
+desc "Runs the Jasmine tests and outputs the results for TC"
+task :ci => [:clean] do
+    serenity "jasmine run --verbose --timeout 30 src/serenity.txt"
+    copyOutputFiles "src/jquery.continuations/content/scripts", "jquery.continuations.*", props[:artifacts]
 end
 
 def self.serenity(args)
@@ -30,14 +55,17 @@ def self.serenity(args)
   sh "#{serenity} #{args}"
 end
 
-task :enable_jasmine_coffee do
-	zipFile = File.join(nugetDir("FubuMVC.Coffee"), "lib", "net40", "FubuMVC.Coffee.dll")
-	bottlesDir = File.join(nugetDir("Serenity"), "tools")
-
-	Dir.mkdir bottlesDir unless exists?(bottlesDir)
-	FileUtils.cp_r(zipFile, File.join(bottlesDir, "FubuMVC.Coffee.dll"))
+def copyOutputFiles(fromDir, filePattern, outDir)
+  Dir.glob(File.join(fromDir, filePattern)){|file| 		
+	copy(file, outDir, :preserve => true) if File.file?(file)
+  } 
 end
 
-def self.nugetDir(package)
-	Dir.glob(File.join(Nuget.package_root,"#{package}.*")).sort.last
+def waitfor(&block)
+  checks = 0
+  until block.call || checks >10 
+    sleep 0.5
+    checks += 1
+  end
+  raise 'waitfor timeout expired' if checks > 10
 end

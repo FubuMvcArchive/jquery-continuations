@@ -90,6 +90,38 @@ describe('Request correlation', function () {
     });
 });
 
+describe('when handling the success callback', function() {
+    var theServer;
+    var theContinuation;
+    
+	beforeEach(function() {
+        theServerContinuation = new $.continuations.continuation();
+        var builder = function() { return JSON.stringify(theServerContinuation) };
+        
+        theServer = sinon.fakeServer.create();
+        theServer.respondWith([200, { 'Content-Type': 'application/json', 'X-Correlation-Id': '1234'}, builder() ]);
+
+        sinon.stub($.continuations, 'process');
+        
+        $.ajax();
+        theServer.respond();
+        theContinuation = $.continuations.process.getCall(0).args[0];
+	});
+	afterEach(function () {
+        theServer.restore();
+        $.continuations.process.restore();
+		$.continuations.reset();
+    });
+    
+    it('sets the response', function() {
+        expect(theContinuation.response).toBeDefined();
+    });
+    
+    it('sets the status code', function() {
+        expect(theContinuation.statusCode).toEqual(200);
+    });
+});
+
 describe('Integrated refresh policy tests', function () {
     var server;
     var refresh;

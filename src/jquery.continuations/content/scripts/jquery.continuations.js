@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.5.10
+﻿// jquery.continuations v0.5.11
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -172,6 +172,8 @@
             }
 
             var continuation = msg.continuation;
+            continuation.statusCode = msg.response.status;
+            continuation.response = msg.response;
             continuation.correlationId = msg.response.getResponseHeader('X-Correlation-Id');
 			
 			if($.isFunction(msg.callback)) {
