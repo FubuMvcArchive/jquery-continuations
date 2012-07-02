@@ -1,0 +1,135 @@
+[0.000][INFO]:      ChromeDriver 18.0.1022.0 c:\code\jquery.continuations\src\packages\Serenity.0.9.5.927\tools\chromedriver.exe
+[1.783][FINE]:      Initializing session with capabilities {
+   "browserName": "chrome",
+   "chrome.switches": [  ],
+   "chromeOptions": {
+      "args": [  ],
+      "binary": "",
+      "extensions": [  ]
+   },
+   "javascriptEnabled": true,
+   "platform": "WINDOWS",
+   "version": ""
+}
+
+[1.784][INFO]:      Launching chrome: "C:\Users\jmarnold\AppData\Local\Google\Chrome\Application\chrome.exe" --disable-hang-monitor --disable-prompt-on-repost --dom-automation --full-memory-crash-report --no-default-browser-check --no-first-run --ignore-certificate-errors --homepage=about:blank
+[2.366][INFO]:      Connected to Chrome successfully. Version: 20.0.1132.47
+[2.420][FINE]:      Command received (/session/e52d34c39d47f35b8098760c6fa204c8)
+[2.421][FINE]:      Command finished (/session/e52d34c39d47f35b8098760c6fa204c8) with response {
+   "sessionId": "e52d34c39d47f35b8098760c6fa204c8",
+   "status": 0,
+   "value": {
+      "acceptSslCerts": false,
+      "applicationCacheEnabled": false,
+      "browserConnectionEnabled": false,
+      "browserName": "chrome",
+      "chrome.chromedriverVersion": "18.0.1022.0",
+      "chrome.nativeEvents": false,
+      "cssSelectorsEnabled": true,
+      "databaseEnabled": false,
+      "handlesAlerts": true,
+      "javascriptEnabled": true,
+      "locationContextEnabled": false,
+      "nativeEvents": true,
+      "platform": "windows",
+      "rotatable": false,
+      "takesScreenshot": true,
+      "version": "20.0.1132.47",
+      "webStorageEnabled": false
+   }
+}
+
+[2.894][FINE]:      Command received (/session/e52d34c39d47f35b8098760c6fa204c8/url) with params {
+   "url": "http://localhost:5500"
+}
+
+[2.894][FINER]:     Waiting for all views to stop loading...
+[2.895][FINER]:     Done waiting for all views to stop loading
+[4.753][FINER]:     Waiting for all views to stop loading...
+[4.754][FINER]:     Done waiting for all views to stop loading
+[4.754][FINE]:      Command finished (/session/e52d34c39d47f35b8098760c6fa204c8/url) with response {
+   "sessionId": "e52d34c39d47f35b8098760c6fa204c8",
+   "status": 0,
+   "value": {
+
+   }
+}
+
+[210.292][FINE]:    Command received (/session/e52d34c39d47f35b8098760c6fa204c8/refresh)
+[210.292][FINER]:   Waiting for all views to stop loading...
+[210.293][FINER]:   Done waiting for all views to stop loading
+[211.225][FINER]:   Waiting for all views to stop loading...
+[211.231][FINER]:   Done waiting for all views to stop loading
+[211.231][FINE]:    Command finished (/session/e52d34c39d47f35b8098760c6fa204c8/refresh) with response {
+   "sessionId": "e52d34c39d47f35b8098760c6fa204c8",
+   "status": 0,
+   "value": {
+
+   }
+}
+
+[211.233][FINE]:    Command received (/session/e52d34c39d47f35b8098760c6fa204c8/refresh)
+[211.233][FINER]:   Waiting for all views to stop loading...
+[211.235][FINER]:   Done waiting for all views to stop loading
+[211.615][FINER]:   Waiting for all views to stop loading...
+[211.619][FINER]:   Done waiting for all views to stop loading
+[211.619][FINE]:    Command finished (/session/e52d34c39d47f35b8098760c6fa204c8/refresh) with response {
+   "sessionId": "e52d34c39d47f35b8098760c6fa204c8",
+   "status": 0,
+   "value": {
+
+   }
+}
+
+[313.992][FINE]:    Command received (/session/e52d34c39d47f35b8098760c6fa204c8/refresh)
+[313.992][FINER]:   Waiting for all views to stop loading...
+[313.992][FINER]:   Done waiting for all views to stop loading
+[314.489][FINER]:   Waiting for all views to stop loading...
+[314.490][FINER]:   Done waiting for all views to stop loading
+[314.490][FINE]:    Command finished (/session/e52d34c39d47f35b8098760c6fa204c8/refresh) with response {
+   "sessionId": "e52d34c39d47f35b8098760c6fa204c8",
+   "status": 0,
+   "value": {
+
+   }
+}
+
+[314.500][FINE]:    Command received (/session/e52d34c39d47f35b8098760c6fa204c8/refresh)
+[314.500][FINER]:   Waiting for all views to stop loading...
+[314.501][FINER]:   Done waiting for all views to stop loading
+[314.826][FINER]:   Waiting for all views to stop loading...
+[314.834][FINER]:   Done waiting for all views to stop loading
+[314.834][FINE]:    Command finished (/session/e52d34c39d47f35b8098760c6fa204c8/refresh) with response {
+   "sessionId": "e52d34c39d47f35b8098760c6fa204c8",
+   "status": 0,
+   "value": {
+
+   }
+}
+
+[337.945][FINE]:    Command received (/session/e52d34c39d47f35b8098760c6fa204c8/refresh)
+[337.945][FINER]:   Waiting for all views to stop loading...
+[337.946][FINER]:   Done waiting for all views to stop loading
+[339.172][FINER]:   Waiting for all views to stop loading...
+[339.177][FINER]:   Done waiting for all views to stop loading
+[339.177][FINE]:    Command finished (/session/e52d34c39d47f35b8098760c6fa204c8/refresh) with response {
+   "sessionId": "e52d34c39d47f35b8098760c6fa204c8",
+   "status": 0,
+   "value": {
+
+   }
+}
+
+[339.179][FINE]:    Command received (/session/e52d34c39d47f35b8098760c6fa204c8/refresh)
+[339.179][FINER]:   Waiting for all views to stop loading...
+[339.179][FINER]:   Done waiting for all views to stop loading
+[339.504][FINER]:   Waiting for all views to stop loading...
+[339.505][FINER]:   Done waiting for all views to stop loading
+[339.511][FINE]:    Command finished (/session/e52d34c39d47f35b8098760c6fa204c8/refresh) with response {
+   "sessionId": "e52d34c39d47f35b8098760c6fa204c8",
+   "status": 0,
+   "value": {
+
+   }
+}
+
