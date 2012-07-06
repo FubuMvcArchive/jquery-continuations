@@ -45,6 +45,26 @@
     });
 });
 
+describe('simple event aggregation', function () {
+	afterEach(function() {
+		$.continuations.reset();
+	});
+	
+	it('triggers all of the subscriptions', function() {
+		var c1 = sinon.stub(), c2 = sinon.stub(), c3 = sinon.stub();
+		
+		$.continuations.bind('AjaxStarted', c1);
+		$.continuations.bind('AjaxStarted', c2);
+		$.continuations.bind('AjaxStarted', c3);
+		
+		$.continuations.trigger('AjaxStarted', {});
+		
+		expect(c1.called).toEqual(true);
+		expect(c2.called).toEqual(true);
+		expect(c3.called).toEqual(true);
+	});
+});
+
 describe('Request correlation', function () {
     var server;
     beforeEach(function () {

@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.5.11
+﻿// jquery.continuations v0.5.13
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
