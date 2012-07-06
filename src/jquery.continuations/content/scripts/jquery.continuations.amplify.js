@@ -21,8 +21,10 @@
     var topics = ['AjaxStarted', 'AjaxCompleted', 'ContinuationError'];
     for(var i = 0; i < topics.length; i++) {
         var topic = topics[i];
-        continuations.bind(topic, function(payload) {
-            amplify.publish(topic, payload);
-        });
+        continuations.bind(topic, (function (topicScoped) {
+            return function(payload) {
+                amplify.publish(topicScoped, payload);
+            };
+        })(topic));
     }
 }(jQuery.continuations));
