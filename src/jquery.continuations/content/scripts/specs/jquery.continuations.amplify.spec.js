@@ -4,7 +4,7 @@
 
 describe('amplify publishing', function() {
     it('publishes each topic through amplify', function() {
-        var topics = ['AjaxStarted', 'AjaxCompleted', 'ContinuationError'];
+        var topics = ['AjaxStarted', 'AjaxCompleted', 'ContinuationError', 'HttpError'];
         var msgs = {};
         
         var forEachTopic = function(action) {

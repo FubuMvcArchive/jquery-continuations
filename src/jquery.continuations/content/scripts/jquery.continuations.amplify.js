@@ -1,4 +1,4 @@
-// jquery.continuations.amplify v0.1.1
+// jquery.continuations.amplify v0.1.2
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -18,7 +18,8 @@
     
     continuations.applyPolicy(new payloadPolicy());
 
-    var topics = ['AjaxStarted', 'AjaxCompleted', 'ContinuationError'];
+	// TODO -- This is stupid. Need to just support wildcards
+    var topics = ['AjaxStarted', 'AjaxCompleted', 'ContinuationError', 'HttpError'];
     for(var i = 0; i < topics.length; i++) {
         var topic = topics[i];
         continuations.bind(topic, (function (topicScoped) {
