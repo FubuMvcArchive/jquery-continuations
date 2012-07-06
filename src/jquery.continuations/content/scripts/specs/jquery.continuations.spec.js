@@ -50,6 +50,20 @@ describe('simple event aggregation', function () {
 		$.continuations.reset();
 	});
 	
+	it('* listens to all topics', function() {
+		var thePayloads = [];
+		var theCallback = function(payload) {
+			thePayloads.push(payload);
+		};
+		
+		$.continuations.bind('*', theCallback);
+		$.continuations.trigger('AjaxStarted', 'p1');
+		$.continuations.trigger('AjaxCompleted', 'p2');
+		$.continuations.trigger('HttpError', 'p3');
+		
+		expect(thePayloads).toEqual(['p1', 'p2', 'p3']);
+	});
+	
 	it('triggers all of the subscriptions', function() {
 		var c1 = sinon.stub(), c2 = sinon.stub(), c3 = sinon.stub();
 		

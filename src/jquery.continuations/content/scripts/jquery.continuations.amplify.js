@@ -1,4 +1,4 @@
-// jquery.continuations.amplify v0.1.2
+// jquery.continuations.amplify v0.2.3
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -15,17 +15,14 @@
             amplify.publish(continuation.topic, continuation.payload);
         };
     };
-    
-    continuations.applyPolicy(new payloadPolicy());
 
-	// TODO -- This is stupid. Need to just support wildcards
-    var topics = ['AjaxStarted', 'AjaxCompleted', 'ContinuationError', 'HttpError'];
-    for(var i = 0; i < topics.length; i++) {
-        var topic = topics[i];
-        continuations.bind(topic, (function (topicScoped) {
-            return function(payload) {
-                amplify.publish(topicScoped, payload);
-            };
-        })(topic));
-    }
+	continuations.resetAmplify = function() {
+		continuations.applyPolicy(new payloadPolicy());
+		continuations.bind('*', function(payload) {
+			amplify.publish(this.topic, payload);
+		});
+	};
+	
+	continuations.resetAmplify();
+	
 }(jQuery.continuations));

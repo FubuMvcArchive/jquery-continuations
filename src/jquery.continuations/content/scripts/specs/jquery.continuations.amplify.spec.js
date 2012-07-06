@@ -1,29 +1,25 @@
-﻿afterEach(function() {
-    $.continuations.callbacks = {};
-});
-
-describe('amplify publishing', function() {
-    it('publishes each topic through amplify', function() {
+﻿describe('amplify publishing', function() {
+    afterEach(function() {
+		$.continuations.reset();
+		$.continuations.resetAmplify();
+	});
+	it('publishes each topic through amplify', function() {
         var topics = ['AjaxStarted', 'AjaxCompleted', 'ContinuationError', 'HttpError'];
         var msgs = {};
         
-        var forEachTopic = function(action) {
-            for(var i = 0; i < topics.length; i++) {
-                action(topics[i]);
-            }
-        };
-        
         for(var i = 0; i < topics.length; i++) {
             var topic = topics[i];
-            amplify.subscribe(topic, function(payload) {
-                msgs[topic] = true;
-                return true;
-            });
+			amplify.subscribe(topic, (function(scoped) {
+				return function(payload) {
+					msgs[scoped] = true;
+					return true;
+				};
+			})(topic));
         }
         
         for(var i = 0; i < topics.length; i++) {
             var topic = topics[i];
-            $.continuations.trigger(topic, {});
+            $.continuations.trigger(topic);
         }
         
         for(var i = 0; i < topics.length; i++) {
@@ -40,6 +36,8 @@ describe('Integrated payload policy tests', function () {
     });
     afterEach(function () {
         server.restore();
+		$.continuations.reset();
+		$.continuations.resetAmplify();
     });
 
     it('should publish the topic/payload when the continuation has a topic and payload', function () {

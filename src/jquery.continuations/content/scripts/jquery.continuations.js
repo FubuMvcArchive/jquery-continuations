@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.5.13
+﻿// jquery.continuations v0.9.14
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -95,15 +95,29 @@
             this.callbacks[topic].push(callback);
         },
         // Mostly public for testing
-        trigger: function(topic, payload) {
-            if( !this.callbacks[topic] ) {
-                return;
+        trigger: function(topic, payload, context) {
+			if(!payload) {
+				payload = {};
+			}
+			
+			if( !this.callbacks[topic] ) {
+                this.callbacks[topic] = [];
             }
-            
+			
+			if(!context) {
+				context = {
+					topic: topic
+				};
+			}
+
             var actions = this.callbacks[topic];
             for(var i = 0; i < actions.length; i++) {
-                actions[i](payload);
+				actions[i].call(context, payload);
             }
+			
+			if(topic != '*') {
+				this.trigger('*', payload, {topic: topic});
+			}
         },
         init: function () {
             var self = this;
