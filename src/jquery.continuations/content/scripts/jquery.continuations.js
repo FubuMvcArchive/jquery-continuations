@@ -102,7 +102,7 @@
             
             var actions = this.callbacks[topic];
             for(var i = 0; i < actions.length; i++) {
-                actions[0](payload);
+                actions[i](payload);
             }
         },
         init: function () {
