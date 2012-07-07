@@ -146,7 +146,12 @@
                     });
                 },
                 error: function(xhr, text, error) {
-                    self.onError(xhr, text, error);
+                    self.onError({
+						response: xhr, 
+						text: text,
+						error: error,
+						callback: this.continuationError
+					});
                 },
                 beforeSend: function (xhr, settings) {
                     self.setupRequest(xhr, settings);
@@ -162,9 +167,16 @@
             this.applyPolicy(new errorPolicy());
             this.applyPolicy(new httpErrorPolicy());
         },
-        onError: function(xhr, text, error) {
-            var continuation = this.buildError(xhr, text, error);
-            this.process(continuation);
+        onError: function(options) {
+            var continuation = this.buildError(options.response, options.text, options.error);
+			var process = true;
+			if($.isFunction(options.callback)) {
+				process = !(options.callback(continuation) === false);
+			}
+			
+			if(process) {
+				this.process(continuation);
+			}
         },
         buildError: function(response, text, error) {
             var continuation = new $.continuations.continuation();
@@ -252,36 +264,5 @@
     $.continuations = module;
     $.continuations.fn = continuations.prototype;
 	$.continuations.continuation = theContinuation;
-	
-	$.fn.correlatedSubmit = function (options) {
-		if(typeof(options) === 'undefined') {
-			options = {};
-		}
-		
-        return this.each(function () {
-            var self = $(this);
-            var correlationId = options.correlationId;
-            if (typeof(correlationId) === 'undefined') {
-                var id = self.attr('id');
-                if (!id) {
-                    id = 'form_' + new Date().getTime().toString();
-                    self.attr('id', id);
-                }
 
-                correlationId = id;
-            }
-
-            self.ajaxSubmit({
-				correlationId: correlationId,
-				continuationSuccess: function(continuation) {
-					continuation.form = self;
-					continuation.options = options;
-					
-					if($.isFunction(options.continuationSuccess)) {
-						options.continuationSuccess(continuation);
-					}
-				}
-            });
-        });
-    };
 } (jQuery));

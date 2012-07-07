@@ -124,7 +124,7 @@ describe('Request correlation', function () {
     });
 });
 
-describe('when handling the success callback', function() {
+describe('integrated success callback', function() {
     var theServer;
     var theContinuation;
     
@@ -155,6 +155,7 @@ describe('when handling the success callback', function() {
         expect(theContinuation.statusCode).toEqual(200);
     });
 });
+
 
 describe('Integrated refresh policy tests', function () {
     var server;
@@ -453,97 +454,140 @@ describe('Integrated redirect policy tests', function() {
     });
 });
 
-describe('Integrated correlatedSubmit tests', function () {
-	var server;
-    beforeEach(function () {
-        server = sinon.fakeServer.create();
-    });
-    afterEach(function () {
-        server.restore();
-        $.continuations.reset();
-    });
+describe('when handling a successful response', function() {
+	var theMessage = null;
+	var theContinuation = null;
+	var theCallback = null;
+	var theContinuationToProcess = null;
+	var _process = null;
 	
-	it('should set form on the continuation', function() {
-		var form = $('<form id="mainForm" action="/correlate" method="post"></form>');
-        var id = '';
-		
-		$.continuations.bind('AjaxStarted', function(request) {
-			server.respondWith([200,
-				{ 'Content-Type': 'application/json', 'X-Correlation-Id': request.correlationId}, '{"success":"true"}'
-			]);
-		});
-		
-		$.continuations.applyPolicy({
-			matches: function(continuation) {
-				return continuation.matchOnProperty('form', function(form) {
-					return form.size() != 0;
-				});
+	beforeEach(function() {
+		theContinuation = new $.continuations.continuation();
+		theCallback = sinon.stub();
+		theMessage = {
+			response: {
+				getResponseHeader: function(key) { 
+					if(key == 'Content-Type') return 'text/json';
+					if(key == 'X-Correlation-Id') return '1234';
+				},
+				status: 200
 			},
-			execute: function(continuation) {
-				id = continuation.form.attr('id');
-			}
-		});
+			continuation: theContinuation,
+			callback: theCallback
+		};
 
-        runs(function () {
-            form.correlatedSubmit();
-			server.respond();
-        });
+		_process = $.continuations.process;
+		$.continuations.process = sinon.stub();
+		$.continuations.onSuccess(theMessage);
+		
+		theContinuationToProcess = $.continuations.process.getCall(0).args[0];
+	});
 
-        waits(500);
-
-        runs(function () {
-            expect(id).toEqual('mainForm');
-        });
+	afterEach(function() {
+		$.continuations.process = _process;
 	});
 	
-	it('should correlate the request via the id of the form', function() {
-		var form = $('<form id="mainForm" action="/correlate" method="post"></form>');
-        var id = '';
-		$.continuations.bind('AjaxStarted', function(request) {
-			server.respondWith([200,
-				{ 'Content-Type': 'application/json', 'X-Correlation-Id': request.correlationId}, '{"success":"true"}'
-			]);
-		});
-        $.continuations.bind('AjaxCompleted', function (response) {
-            id = response.correlationId;
-        });
-
-        runs(function () {
-            form.correlatedSubmit();
-			server.respond();
-        });
-
-        waits(500);
-
-        runs(function () {
-            expect(id).toEqual('mainForm');
-        });
+	it('invokes the callback', function() {
+		expect(theCallback.called).toEqual(true);
+		expect(theCallback.getCall(0).args[0]).toEqual(theContinuation);
 	});
 	
-	it('should correlate the request via the specified correlation id', function() {
-		var form = $('<form id="mainForm" action="/correlate" method="post"></form>');
-		var id = '';
-		$.continuations.bind('AjaxStarted', function(request) {
-			server.respondWith([200,
-				{ 'Content-Type': 'application/json', 'X-Correlation-Id': request.correlationId}, '{"success":"true"}'
-			]);
-		});
-        $.continuations.bind('AjaxCompleted', function (response) {
-            id = response.correlationId;
-        });
+	it('processes the continuation', function() {
+		expect($.continuations.process.called).toEqual(true);
+		expect(theContinuationToProcess).toEqual(theContinuation);
+	});
+	
+	it('sets the status code', function() {
+		expect(theContinuationToProcess.statusCode).toEqual(200);
+	});
+	
+	it('sets the response', function() {
+		expect(theContinuationToProcess.response).toEqual(theMessage.response);
+	});
+	
+	it('sets the correlation id', function() {
+		expect(theContinuationToProcess.correlationId).toEqual('1234');
+	});
+});
 
-        runs(function () {
-            form.correlatedSubmit({
-				correlationId: '123'
-			});
-			server.respond();
-        });
+describe('when handling an erroneous response', function() {
+	var theOptions = null;
+	var theContinuation = null;
+	var theCallback = null;
+	var theContinuationToProcess = null;
+	var _process = null;
+	var _buildError = null;
+	
+	beforeEach(function() {
+		theContinuation = new $.continuations.continuation();
+		theCallback = sinon.stub();
+		theOptions = {
+			response: { id: '21341235' },
+			text: 'Hello',
+			error: 'Uh huh',
+			callback: theCallback
+		};
 
-        waits(500);
+		_process = $.continuations.process;
+		_buildError = $.continuations.buildError;
+		
+		$.continuations.process = sinon.stub();
+		$.continuations.buildError = function() { return theContinuation; };
+		
+		$.continuations.onError(theOptions);
+		
+		theContinuationToProcess = $.continuations.process.getCall(0).args[0];
+	});
 
-        runs(function () {
-            expect(id).toEqual('123');
-        });
+	afterEach(function() {
+		$.continuations.process = _process;
+		$.continuations.buildError = _buildError;
+	});
+	
+	it('invokes the callback', function() {
+		expect(theCallback.called).toEqual(true);
+		expect(theCallback.getCall(0).args[0]).toEqual(theContinuation);
+	});
+	
+	it('processes the continuation', function() {
+		expect($.continuations.process.called).toEqual(true);
+		expect(theContinuationToProcess).toEqual(theContinuation);
+	});
+});
+
+describe('when handling an erroneous response that stops the processing', function() {
+	var theOptions = null;
+	var theContinuation = null;
+	var theCallback = null;
+	var _process = null;
+	var _buildError = null;
+	
+	beforeEach(function() {
+		theContinuation = new $.continuations.continuation();
+		theCallback = sinon.stub().returns(false);
+		theOptions = {
+			response: { id: '21341235' },
+			text: 'Hello',
+			error: 'Uh huh',
+			callback: theCallback
+		};
+
+		_process = $.continuations.process;
+		_buildError = $.continuations.buildError;
+		
+		$.continuations.process = sinon.stub();
+		$.continuations.buildError = function() { return theContinuation; };
+		
+		$.continuations.onError(theOptions);
+	});
+
+	afterEach(function() {
+		$.continuations.process = _process;
+		$.continuations.buildError = _buildError;
+	});
+	
+	it('does not process the continuation', function() {
+		expect($.continuations.process.called).toEqual(false);
 	});
 });
 
@@ -668,74 +712,6 @@ describe('Custom options tester', function() {
 				url: '/custom-options',
 				options: {
 					customProperty: 'some random value'
-				}
-			});
-			server.respond();
-		});
-		
-		waits(500);
-		
-		runs(function() {
-			expect(invoked).toEqual(true);
-		});
-	});
-	
-	it('should persist options passed to correlatedSubmit', function() {
-		$.continuations.bind('AjaxStarted', function(request) {
-			server.respondWith([200, { 
-					'Content-Type': 'application/json', 
-					'X-Correlation-Id': request.correlationId
-				}, continuationBuilder()
-			]);
-		});
-		var invoked = false;
-		runs(function() {
-			$.continuations.applyPolicy({
-				matches: function(continuation) { return continuation.options.customProperty == 'some random value'; },
-				execute: function() { invoked = true; }
-			});
-			
-			var form = $('<form id="mainForm" action="/correlate" method="post"></form>');
-			form.correlatedSubmit({
-				customProperty: 'some random value'
-			});
-			server.respond();
-		});
-		
-		waits(500);
-		
-		runs(function() {
-			expect(invoked).toEqual(true);
-		});
-	});
-});
-
-describe('integrated success callback tests', function() {
-	var server;
-	var continuationBuilder;
-	beforeEach(function() {
-		server = sinon.fakeServer.create();
-		continuationBuilder = function() { return JSON.stringify({}) };
-	});
-	afterEach(function () {
-        server.restore();
-		$.continuations.reset();
-    });
-	
-	it('should invoke success callback from correlatedSubmit', function() {
-		$.continuations.bind('AjaxStarted', function(request) {
-			server.respondWith([200, { 
-					'Content-Type': 'application/json', 
-					'X-Correlation-Id': request.correlationId
-				}, continuationBuilder()
-			]);
-		});
-		var invoked = false;
-		runs(function() {
-			var form = $('<form id="mainForm" action="/correlate" method="post"></form>');
-			form.correlatedSubmit({
-				continuationSuccess: function(continuation) {
-					invoked = true;
 				}
 			});
 			server.respond();
