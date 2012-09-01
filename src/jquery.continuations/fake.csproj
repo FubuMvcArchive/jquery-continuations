@@ -31,10 +31,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FubuMVC.Coffee">
-      <HintPath>..\packages\FubuMVC.Coffee.0.0.1.257\lib\net40\FubuMVC.Coffee.dll</HintPath>
+      <HintPath>..\packages\FubuMVC.Coffee.0.0.1.353\lib\net40\FubuMVC.Coffee.dll</HintPath>
     </Reference>
     <Reference Include="Serenity">
-      <HintPath>..\packages\Serenity.0.9.8.21\lib\net40\Serenity.dll</HintPath>
+      <HintPath>..\packages\Serenity.0.9.8.46\lib\net40\Serenity.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
