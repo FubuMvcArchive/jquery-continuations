@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.9.14
+﻿// jquery.continuations v0.9.15
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -182,7 +182,8 @@
             var continuation = new $.continuations.continuation();
             continuation.success = false;
             
-            if (response.getResponseHeader('Content-Type').indexOf('json') != -1) {
+			var header = response.getResponseHeader('Content-Type');
+            if (header && header.indexOf('json') != -1) {
                 continuation = JSON.parse(response.responseText);
             }
             
