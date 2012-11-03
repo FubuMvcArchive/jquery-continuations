@@ -4,7 +4,6 @@ build
 build35
 artifacts
 obj
-bin
 deploy
 deploy/*
 src/CommonAssemblyInfo.cs
