@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.9.15
+﻿// jquery.continuations v0.9.16
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -17,7 +17,13 @@
     var CORRELATION_ID = 'X-Correlation-Id';
     var policies = [];
 	
-	var theContinuation = function () { };
+	function theContinuation() {
+        this.errors = [];
+        this.success = false;
+        this.refresh = false;
+        this.correlationId = null;
+        this.options = { };
+    }
     theContinuation.prototype = {
         success: false,
         errors: [],
