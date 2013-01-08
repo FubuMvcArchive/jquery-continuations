@@ -1,4 +1,4 @@
-// jquery.continuations.amplify v0.2.3
+// jquery.continuations.amplify v1.0.3
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0

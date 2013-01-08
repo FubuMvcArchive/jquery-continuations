@@ -1,4 +1,4 @@
-// jquery.continuations.forms v0.9.1
+// jquery.continuations.forms v1.0.1
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
