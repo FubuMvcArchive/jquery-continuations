@@ -1,4 +1,4 @@
-﻿// jquery.continuations v0.9.16
+﻿// jquery.continuations v1.0.17
 //
 // Copyright (C)2011 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -6,13 +6,6 @@
 // https://github.com/DarthFubuMVC/jquery-continuations
 
 (function ($) {
-
-    "use strict";
-
-    // Sanity check of dependencies
-    if (typeof ($) !== 'function') {
-        throw 'jQuery.continuations: jQuery not found.';
-    }
 
     var CORRELATION_ID = 'X-Correlation-Id';
     var policies = [];
@@ -37,7 +30,14 @@
 			return this.matchOnProperty('correlationId', function(id) {
 				return id != null;
 			});
-        }
+        },
+		eachError: function(action) {
+			if(!this.errors) return;
+			
+			for(var i = 0; i < this.errors.length; i++) {
+				action(this.errors[i]);
+			}
+		}
     };
 
     var refreshPolicy = function () {
@@ -238,8 +238,8 @@
             this.callbacks = {};
 		},
         process: function (continuation) {
-			var standardContinuation = new $.continuations.continuation();
-			continuation = $.extend(standardContinuation, continuation);
+			continuation= $.continuations.create(continuation);
+
             var matchingPolicies = [];
             for (var i = 0; i < policies.length; ++i) {
                 var p = policies[i];
@@ -271,5 +271,9 @@
     $.continuations = module;
     $.continuations.fn = continuations.prototype;
 	$.continuations.continuation = theContinuation;
+	$.continuations.create = function(values) {
+		var continuation = new theContinuation();
+		return $.extend(true, continuation, values);
+	};
 
 } (jQuery));

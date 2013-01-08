@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FubuMVC.Coffee">
-      <HintPath>..\packages\FubuMVC.Coffee.0.0.1.577\lib\net40\FubuMVC.Coffee.dll</HintPath>
+      <HintPath>..\packages\FubuMVC.Coffee.0.0.1.591\lib\net40\FubuMVC.Coffee.dll</HintPath>
     </Reference>
     <Reference Include="Serenity">
       <HintPath>..\packages\Serenity.0.9.8.116\lib\net40\Serenity.dll</HintPath>

@@ -861,3 +861,36 @@ describe('when building an error continuation for a response that is json', func
         expect(theContinuation.response.getResponseHeader('Content-Type')).toEqual('application/json');
     });
 });
+
+describe('Continuation builder tests', function() {
+	var theValues = null;
+	var theContinuation = null;
+	
+	beforeEach(function() {
+		theValues = {};
+		// hello
+		theContinuation = $.continuations.create(theValues);
+	});
+	
+	it('creates the canonical continuation type', function() {
+		expect(theContinuation.errors).toEqual([]);
+	});
+});
+
+describe('continuation tests', function() {
+	var theContinuation = null;
+	
+	beforeEach(function() {
+		theContinuation = new $.continuations.continuation();
+		theContinuation.errors = [ {id: '1'}, {id: '2'}, {id: '3'}];
+	});
+	
+	it('iterates each error', function() {
+		var theErrors = [];
+		theContinuation.eachError(function(error) {
+			theErrors.push(error);
+		});
+		
+		expect(theErrors).toEqual(theContinuation.errors);
+	});
+});
