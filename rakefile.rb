@@ -36,16 +36,19 @@ end
 
 desc "Opens the Serenity Jasmine Runner in interactive mode"
 task :open do
+    Dir.mkdir 'src/jquery.continuations/bin' 
 	serenity "jasmine interactive src/serenity.txt -b Firefox"
 end
 
 desc "Runs the Jasmine tests"
 task :run => [:restore_if_missing] do
+    Dir.mkdir 'src/jquery.continuations/bin' 
 	serenity "jasmine run --timeout 60 src/serenity.txt -b Firefox"
 end
 
 desc "Runs the Jasmine tests and outputs the results for TC"
 task :ci => [:clean, :restore_if_missing] do
+    Dir.mkdir 'src/jquery.continuations/bin' 
     serenity "jasmine run --verbose --timeout 60 src/serenity.txt -b Firefox"
     copyOutputFiles "src/jquery.continuations/content/scripts", "jquery.continuations.*", props[:artifacts]
 end
