@@ -156,6 +156,36 @@ describe('integrated success callback', function() {
     });
 });
 
+describe('Overriding continuation calls', function() {
+    var theServer;
+    var theContinuation;
+    
+    beforeEach(function() {
+        theServerContinuation = new $.continuations.continuation();
+        var builder = function() { return JSON.stringify(theServerContinuation) };
+        
+        theServer = sinon.fakeServer.create();
+        theServer.respondWith([200, { 'Content-Type': 'application/json', 'X-Correlation-Id': '1234'}, builder() ]);
+
+        sinon.stub($.continuations, 'process');
+        
+        $.ajax({
+            global: false
+        });
+        theServer.respond();
+    });
+    afterEach(function () {
+        theServer.restore();
+        $.continuations.process.restore();
+        $.continuations.reset();
+    });
+    
+    it('does not invoke the pipeline', function() {
+        expect($.continuations.process.called).toEqual(false);
+    });
+});
+
+
 
 describe('Integrated refresh policy tests', function () {
     var server;
@@ -455,7 +485,8 @@ describe('Integrated redirect policy tests', function() {
 });
 
 describe('when handling a successful response', function() {
-	var theMessage = null;
+	var theResponse = null;
+    var theSettings = null;
 	var theContinuation = null;
 	var theCallback = null;
 	var theContinuationToProcess = null;
@@ -464,23 +495,23 @@ describe('when handling a successful response', function() {
 	beforeEach(function() {
 		theContinuation = new $.continuations.continuation();
 		theCallback = sinon.stub();
-		theMessage = {
-			response: {
-				getResponseHeader: function(key) { 
-					if(key == 'Content-Type') return 'text/json';
-					if(key == 'X-Correlation-Id') return '1234';
-				},
-				status: 200
-			},
-			continuation: theContinuation,
-			callback: theCallback
-		};
+		theResponse = {
+            getResponseHeader: function(key) { 
+                if(key == 'Content-Type') return 'text/json';
+                if(key == 'X-Correlation-Id') return '1234';
+            },
+            status: 200,
+            responseText: JSON.stringify(theContinuation)
+        };
+        theSettings = {
+            continuationSuccess: theCallback
+        };
 
-		_process = $.continuations.process;
-		$.continuations.process = sinon.stub();
-		$.continuations.onSuccess(theMessage);
-		
-		theContinuationToProcess = $.continuations.process.getCall(0).args[0];
+        _process = $.continuations.process;
+        $.continuations.process = sinon.stub();
+        $.continuations.onSuccess({}, theResponse, theSettings);
+
+        theContinuationToProcess = $.continuations.process.getCall(0).args[0];
 	});
 
 	afterEach(function() {
@@ -489,12 +520,12 @@ describe('when handling a successful response', function() {
 	
 	it('invokes the callback', function() {
 		expect(theCallback.called).toEqual(true);
-		expect(theCallback.getCall(0).args[0]).toEqual(theContinuation);
+		expect(theCallback.getCall(0).args[0]).toBeDefined();
 	});
 	
 	it('processes the continuation', function() {
 		expect($.continuations.process.called).toEqual(true);
-		expect(theContinuationToProcess).toEqual(theContinuation);
+		expect(theContinuationToProcess).toBeDefined();
 	});
 	
 	it('sets the status code', function() {
@@ -502,7 +533,7 @@ describe('when handling a successful response', function() {
 	});
 	
 	it('sets the response', function() {
-		expect(theContinuationToProcess.response).toEqual(theMessage.response);
+		expect(theContinuationToProcess.response).toEqual(theResponse);
 	});
 	
 	it('sets the correlation id', function() {
@@ -511,37 +542,37 @@ describe('when handling a successful response', function() {
 });
 
 describe('when handling an erroneous response', function() {
-	var theOptions = null;
+	var theSettings = null;
+    var theResponse = null;
 	var theContinuation = null;
 	var theCallback = null;
 	var theContinuationToProcess = null;
 	var _process = null;
-	var _buildError = null;
+    var _parse = null;
 	
 	beforeEach(function() {
 		theContinuation = new $.continuations.continuation();
 		theCallback = sinon.stub();
-		theOptions = {
-			response: { id: '21341235' },
-			text: 'Hello',
-			error: 'Uh huh',
-			callback: theCallback
+        theResponse = {
+        };
+		theSettings = {
+			continuationError: theCallback
 		};
 
+        _parse = $.continuations.parseContinuation;
 		_process = $.continuations.process;
-		_buildError = $.continuations.buildError;
 		
 		$.continuations.process = sinon.stub();
-		$.continuations.buildError = function() { return theContinuation; };
+		$.continuations.parseContinuation = function() { return theContinuation; };
 		
-		$.continuations.onError(theOptions);
+		$.continuations.onError(theResponse, theSettings);
 		
 		theContinuationToProcess = $.continuations.process.getCall(0).args[0];
 	});
 
 	afterEach(function() {
 		$.continuations.process = _process;
-		$.continuations.buildError = _buildError;
+		$.continuations.parseContinuation = _parse;
 	});
 	
 	it('invokes the callback', function() {
@@ -556,34 +587,34 @@ describe('when handling an erroneous response', function() {
 });
 
 describe('when handling an erroneous response that stops the processing', function() {
-	var theOptions = null;
+	var theSettings = null;
+    var theResponse = null;
 	var theContinuation = null;
 	var theCallback = null;
 	var _process = null;
-	var _buildError = null;
+    var _parse = null;
 	
 	beforeEach(function() {
 		theContinuation = new $.continuations.continuation();
 		theCallback = sinon.stub().returns(false);
-		theOptions = {
-			response: { id: '21341235' },
-			text: 'Hello',
-			error: 'Uh huh',
-			callback: theCallback
+        theResponse = {
+        };
+		theSettings = {
+			continuationError: theCallback
 		};
 
+        _parse = $.continuations.parseContinuation;
 		_process = $.continuations.process;
-		_buildError = $.continuations.buildError;
 		
 		$.continuations.process = sinon.stub();
-		$.continuations.buildError = function() { return theContinuation; };
+		$.continuations.parseContinuation = function() { return theContinuation; };
 		
-		$.continuations.onError(theOptions);
+		$.continuations.onError(theResponse, theSettings);
 	});
 
 	afterEach(function() {
 		$.continuations.process = _process;
-		$.continuations.buildError = _buildError;
+		$.continuations.parseContinuation = _parse;
 	});
 	
 	it('does not process the continuation', function() {
@@ -756,8 +787,8 @@ describe('Global error handling', function() {
         theContinuation = new $.continuations.continuation();
         theContinuation.statusCode = theStatusCode;
         
-        theOriginal = $.continuations.buildError;
-        $.continuations.buildError = sinon.spy(function(response) {
+        theOriginal = $.continuations.parseContinuation;
+        $.continuations.parseContinuation = sinon.spy(function(response) {
             theResponse = response;
             return theContinuation;
         });
@@ -773,13 +804,13 @@ describe('Global error handling', function() {
 	});
 	afterEach(function () {
         theServer.restore();
-        $.continuations.buildError = theOriginal;
+        $.continuations.parseContinuation = theOriginal;
         $.continuations.process.restore();
 		$.continuations.reset();
     });
     
     it('builds the error continuation', function() {
-        expect($.continuations.buildError.called).toEqual(true);
+        expect($.continuations.parseContinuation.called).toEqual(true);
         expect(theResponse.status).toEqual(theStatusCode);
     });
     
@@ -843,7 +874,9 @@ describe('when building an error continuation for a response that is json', func
 
         sinon.stub($.continuations, 'process');
         
-        $.ajax();
+        $.ajax({
+        });
+        
         theServer.respond();
         theContinuation = $.continuations.process.getCall(0).args[0];
 	});
@@ -893,4 +926,76 @@ describe('continuation tests', function() {
 		
 		expect(theErrors).toEqual(theContinuation.errors);
 	});
+	
+	it('contentType defaults to json', function() {
+		expect(theContinuation.contentType).toEqual('application/json');
+	});
+	
+	it('isAjax for application/json', function() {
+		theContinuation.contentType = 'application/json';
+		expect(theContinuation.isAjax()).toEqual(true);
+	});
+	
+	it('isAjax for text/json', function() {
+		theContinuation.contentType = 'text/json';
+		expect(theContinuation.isAjax()).toEqual(true);
+	});
+	
+	it('isAjax negative', function() {
+		theContinuation.contentType = 'text/html';
+		expect(theContinuation.isAjax()).toEqual(false);
+	});
+	
+	it('isHtml for text/html', function() {
+		theContinuation.contentType = 'text/html';
+		expect(theContinuation.isHtml()).toEqual(true);
+	});
+	
+	it('isHtml negative', function() {
+		theContinuation.contentType = 'text/json';
+		expect(theContinuation.isHtml()).toEqual(false);
+	});
+});
+
+describe('conventional processing of non-json requests', function() {
+    var theServer;
+    
+    beforeEach(function() {
+        theServer = sinon.fakeServer.create();
+    });
+    
+    afterEach(function () {
+        theServer.restore();
+        $.continuations.reset();
+    });
+
+    it('should persist options passed to ajax', function() {
+        var theExpectedHtml = '<h1>Hello, World</h1>';
+        $.continuations.bind('AjaxStarted', function(request) {
+            theServer.respondWith([200, { 
+                'Content-Type': 'text/html', 
+                'X-Correlation-Id': request.correlationId
+            }, theExpectedHtml]);
+        });
+        
+        var theActualHtml;
+        runs(function() {
+            $.continuations.applyPolicy({
+                matches: function(continuation) { return continuation.isHtml(); },
+                execute: function(continuation) { 
+                    theActualHtml = continuation.response.responseText;
+                }
+            });
+            $.ajax({ 
+                url: '/html-template'
+            });
+            theServer.respond();
+        });
+
+        waits(500);
+
+        runs(function() {
+            expect(theActualHtml).toEqual(theExpectedHtml);
+        });
+    });
 });

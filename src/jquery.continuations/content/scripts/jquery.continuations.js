@@ -1,6 +1,6 @@
-﻿// jquery.continuations v1.0.17
+﻿// jquery.continuations v1.1.0.18
 //
-// Copyright (C)2011 Joshua Arnold, Jeremy Miller
+// Copyright (C)2011-2013 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
 //
 // https://github.com/DarthFubuMVC/jquery-continuations
@@ -14,15 +14,17 @@
         this.errors = [];
         this.success = false;
         this.refresh = false;
+		this.contentType = 'application/json';
         this.correlationId = null;
         this.options = { };
     }
     theContinuation.prototype = {
-        success: false,
-        errors: [],
-        refresh: false,
-        correlationId: null,
-		options: {},
+		isAjax: function() {
+			return this.contentType.indexOf('json') != -1;
+		},
+		isHtml: function() {
+			return this.contentType.indexOf('html') != -1;
+		},
 		matchOnProperty: function(prop, predicate) {
 			return typeof(this[prop]) !== 'undefined' && predicate(this[prop]);
 		},
@@ -88,11 +90,11 @@
         };
     };
 
-    var continuations = function () { 
+    function continuations() { 
         this.callbacks = {};
+        this.setupDefaults();
     };
     continuations.prototype = {
-        // I'm calling YAGNI on the unbind since we have a reset
         bind: function(topic, callback) {
             if( !this.callbacks[topic] ) {
                 this.callbacks[topic] = [];
@@ -125,46 +127,21 @@
 				this.trigger('*', payload, {topic: topic});
 			}
         },
-        init: function () {
-            var self = this;
-            $(document).ajaxComplete(function (e, xhr, options) {
-                self.trigger('AjaxCompleted', {
-                    correlationId: xhr.getResponseHeader(CORRELATION_ID)
-                });
-            });
-            
-            $.ajaxSetup({
-                cache: false,
-                success: function (continuation, status, jqXHR) {
-					var options = this.options;
-					if(typeof(options) === 'undefined') {
-						options = {};
-					}
-					if(typeof(continuation) !== 'undefined') {
-						continuation.options = options;
-					}
-					
-                    self.onSuccess({
-                        continuation: continuation,
-						callback: this.continuationSuccess,
-                        status: status,
-                        response: jqXHR
-                    });
-                },
-                error: function(xhr, text, error) {
-                    self.onError({
-						response: xhr, 
-						text: text,
-						error: error,
-						callback: this.continuationError
-					});
-                },
-                beforeSend: function (xhr, settings) {
-                    self.setupRequest(xhr, settings);
-                }
-            });
+        onSuccess: function(event, response, settings) {
+            var continuation = this.parseContinuation(response);
 
-            this.setupDefaults();
+            var options = settings.options;
+            if(typeof(options) === 'undefined') {
+                options = {};
+            }
+
+            continuation.options = options;
+
+            if($.isFunction(settings.continuationSuccess)) {
+                settings.continuationSuccess(continuation);
+            }
+
+            this.process(continuation);
         },
         setupDefaults: function () {
             this.applyPolicy(new refreshPolicy());
@@ -173,18 +150,18 @@
             this.applyPolicy(new errorPolicy());
             this.applyPolicy(new httpErrorPolicy());
         },
-        onError: function(options) {
-            var continuation = this.buildError(options.response, options.text, options.error);
+        onError: function(response, settings) {
+            var continuation = this.parseContinuation(response);
 			var process = true;
-			if($.isFunction(options.callback)) {
-				process = !(options.callback(continuation) === false);
+			if($.isFunction(settings.continuationError)) {
+				process = !(settings.continuationError(continuation) === false);
 			}
 			
 			if(process) {
 				this.process(continuation);
 			}
         },
-        buildError: function(response, text, error) {
+        parseContinuation: function(response) {
             var continuation = new $.continuations.continuation();
             continuation.success = false;
             
@@ -193,27 +170,12 @@
                 continuation = JSON.parse(response.responseText);
             }
             
+            continuation.contentType = header;
             continuation.response = response;
             continuation.statusCode = response.status;
+            continuation.correlationId = response.getResponseHeader('X-Correlation-Id');
             
             return continuation;
-        },
-        onSuccess: function (msg) {
-            var contentType = msg.response.getResponseHeader('Content-Type');
-            if (!contentType || contentType.indexOf('json') == -1) {
-                return;
-            }
-
-            var continuation = msg.continuation;
-            continuation.statusCode = msg.response.status;
-            continuation.response = msg.response;
-            continuation.correlationId = msg.response.getResponseHeader('X-Correlation-Id');
-			
-			if($.isFunction(msg.callback)) {
-				msg.callback(continuation);
-			}
-
-            this.process(continuation);
         },
         // Keep this public for form correlation
         setupRequest: function (xhr, settings) {
@@ -264,7 +226,24 @@
     };
     
     var module = new continuations();
-    module.init();
+    
+    $(document).ajaxSend(function(e, jqxhr, settings) {
+        module.setupRequest(jqxhr, settings);
+    });
+    
+    $(document).ajaxComplete(function(e, jqxhr) {
+        module.trigger('AjaxCompleted', {
+            correlationId: jqxhr.getResponseHeader(CORRELATION_ID)
+        });
+    });
+    
+    $(document).ajaxError(function(e, jqxhr, settings) {
+        module.onError(jqxhr, settings);
+    });
+    
+    $(document).ajaxSuccess(function(e, response, settings) {
+        module.onSuccess(e, response, settings);
+    });
 
 
     // Exports
