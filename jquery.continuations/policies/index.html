@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+    <title>
+      The Continuation Policy | jquery.continuations
+    </title><meta charset="utf-8" />
+<meta content="FubuDocs" name="description" />
+<meta content="FubuDocs" name="author" />
+
+
+
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/sons-of-obsidian.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/toastr.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/twitter/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/twitter/bootstrap-responsive.min.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/toastr-responsive.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/fubudocs.core.css" />
+
+<link href="http://fonts.googleapis.com/css?family=Oswald:400,300" rel="stylesheet" type="text/css" media="screen" />
+  </head>
+  <body data-target=".bs-docs-sidebar" data-spy="scroll">
+    <div class="container">
+      
+      
+
+<div class="row">
+  <div class="span6">
+    <p class="logo">
+      <a title="Fubu" href="/jquery-continuations/topics"><span>Fubu</span></a>
+      <a class="project-logo" title="Conventional AJAX response processing for your JS" href="/jquery-continuations/jquery.continuations"><span>jquery.continuations</span></a>
+    </p>
+  </div>
+  <div class="span6">
+    <div class="top-header text-right">
+      <em>
+        <em><a href="https://groups.google.com/forum/?fromgroups#%21forum/fubumvc-devel">Join our vibrant mailing list</a></em>
+      </em>
+      <div class="social">
+        <a class="ico-github" href="http://github.com/DarthFubuMVC/jquery-continuations"><img src="/jquery-continuations/_content/images/github-icon.png" alt="Github" /></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="navbar" id="nav-follow">
+        <div class="navbar-inner">
+          <div class="container">
+            <ul class="nav"><li><a data-key="index" href="/jquery-continuations/jquery.continuations">jquery.continuations »</a></li><li class="active"><a data-key="policies" href="/jquery-continuations/jquery.continuations/policies">The Continuation Policy »</a></li></ul>
+<ul style="float:right" class="nav"><li><a title="The Continuation Pipeline" href="/jquery-continuations/jquery.continuations/pipeline">Previous</a></li><li><a title="Default Policies" href="/jquery-continuations/jquery.continuations/defaults">Next</a></li></ul>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        
+
+        <div class="row">
+          <div class="span3 sidebar">
+            <h3 class="half-margin">Topics</h3>
+            <ul class="nav nav-tabs nav-stacked affix-top" id="page-toc">
+            <li><a href="#overview">Overview</a></li><li><a href="#matches">matches</a></li><li><a href="#execute">execute</a></li><li><a href="#registration">Registration</a></li></ul>
+            <br />
+            <h3 class="no-margin">Next</h3>
+<p><a data-key="defaults" href="/jquery-continuations/jquery.continuations/defaults">Default Policies</a></p>
+<h3 class="no-margin">Previous</h3>
+<p><a data-key="pipeline" href="/jquery-continuations/jquery.continuations/pipeline">The Continuation Pipeline</a></p>
+          </div>
+          <div class="span9">
+            <h1 class="no-margin">The Continuation Policy</h1><hr class="header-line" />
+             <!--Title: The Continuation Policy -->
+<section><h4 class="section-header" id="overview">Overview</h4>
+	<p>
+		Continuation policies are objects that are invoked during the Continuation Pipeline. They conform to a simple data structure that requires two methods:
+	</p>
+	<ol>
+		<li>matches(continuation) : bool</li>
+		<li>execute(continuation) : void</li>
+	</ol></section>
+
+<section><h4 class="section-header" id="matches">matches</h4>
+	<p>This function is used to evaluate whether the policy applies to the continuation by returning true or false.</p></section>
+
+<pre class="prettyprint lang-js linenums:30 prettyprinted" data-linenums="30" style=""><ol class="linenums"><li value="30" class="L9"><span class="pln">matches</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">continuation</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span></li><li class="L0"><span class="pln">    </span><span class="kwd">return</span><span class="pln"> continuation</span><span class="pun">.</span><span class="pln">statusCode </span><span class="pun">==</span><span class="pln"> </span><span class="lit">200</span><span class="pun">;</span><span class="pln"> </span></li><li class="L1"><span class="pun">}</span></li></ol></pre>
+
+<section><h4 class="section-header" id="execute">execute</h4>
+	<p>This function is used to perform anything and everything using the continuation. It is only invoked when matche function returns true.</p></section>
+
+<pre class="prettyprint lang-js linenums:36 prettyprinted" data-linenums="36" style=""><ol class="linenums"><li value="36" class="L5"><span class="pln">execute</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">continuation</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span></li><li class="L6"><span class="pln">    console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">continuation</span><span class="pun">.</span><span class="pln">errors</span><span class="pun">);</span></li><li class="L7"><span class="pun">}</span></li></ol></pre>
+
+<section><h4 class="section-header" id="registration">Registration</h4>
+	<p>Registering policies is nice and simple:</p></section>
+
+<pre class="prettyprint lang-js linenums:42 prettyprinted" data-linenums="42" style=""><ol class="linenums"><li value="42" class="L1"><span class="pln">$</span><span class="pun">.</span><span class="pln">continuations</span><span class="pun">.</span><span class="pln">applyPolicy</span><span class="pun">(</span><span class="pln">myPolicy</span><span class="pun">);</span></li></ol></pre>
+
+<p>In the next section, we'll take a look at the default policies.</p>
+            </div>
+        </div>
+      </div>
+    </div>
+    <script src="/jquery-continuations/_content/scripts/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/prettify.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/bootstrap-prettify.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/fubudocs.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/toastr.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/twitter/bootstrap.min.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/fubudocs-tools.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/twitter/bootstrap-affix.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/topics.js" type="text/javascript"></script>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+    </p>
+    <p>
+      Powered by <a href="http://github.com/DarthFubuMVC/FubuDocs">FubuDocs</a>.
+    </p>
+    <p>
+      Code licensed under the <a target="_blank" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a>.
+    </p>
+  </div>
+</footer>
+  
+</body></html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+    <title>
+      Continuation Events | jquery.continuations
+    </title><meta charset="utf-8" />
+<meta content="FubuDocs" name="description" />
+<meta content="FubuDocs" name="author" />
+
+
+
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/sons-of-obsidian.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/toastr.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/twitter/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/twitter/bootstrap-responsive.min.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/toastr-responsive.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/fubudocs.core.css" />
+
+<link href="http://fonts.googleapis.com/css?family=Oswald:400,300" rel="stylesheet" type="text/css" media="screen" />
+  </head>
+  <body data-target=".bs-docs-sidebar" data-spy="scroll">
+    <div class="container">
+      
+      
+
+<div class="row">
+  <div class="span6">
+    <p class="logo">
+      <a title="Fubu" href="/jquery-continuations/topics"><span>Fubu</span></a>
+      <a class="project-logo" title="Conventional AJAX response processing for your JS" href="/jquery-continuations/jquery.continuations"><span>jquery.continuations</span></a>
+    </p>
+  </div>
+  <div class="span6">
+    <div class="top-header text-right">
+      <em>
+        <em><a href="https://groups.google.com/forum/?fromgroups#%21forum/fubumvc-devel">Join our vibrant mailing list</a></em>
+      </em>
+      <div class="social">
+        <a class="ico-github" href="http://github.com/DarthFubuMVC/jquery-continuations"><img src="/jquery-continuations/_content/images/github-icon.png" alt="Github" /></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="navbar" id="nav-follow">
+        <div class="navbar-inner">
+          <div class="container">
+            <ul class="nav"><li><a data-key="index" href="/jquery-continuations/jquery.continuations">jquery.continuations »</a></li><li class="active"><a data-key="events" href="/jquery-continuations/jquery.continuations/events">Continuation Events »</a></li></ul>
+<ul style="float:right" class="nav"><li><a title="Default Policies" href="/jquery-continuations/jquery.continuations/defaults">Previous</a></li><li><a title="Custom Properties" href="/jquery-continuations/jquery.continuations/custom">Next</a></li></ul>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        
+
+        <div class="row">
+          <div class="span3 sidebar">
+            <h3 class="half-margin">Topics</h3>
+            <ul class="nav nav-tabs nav-stacked affix-top" id="page-toc">
+            <li><a href="#consuming">Consuming events</a></li><li><a href="#ajaxstarted">AjaxStarted</a></li><li><a href="#ajax-completed">AjaxCompleted</a></li><li><a href="#continuation-error">ContinuationError</a></li><li><a href="#http-error">HttpError</a></li></ul>
+            <br />
+            <h3 class="no-margin">Next</h3>
+<p><a data-key="custom" href="/jquery-continuations/jquery.continuations/custom">Custom Properties</a></p>
+<h3 class="no-margin">Previous</h3>
+<p><a data-key="defaults" href="/jquery-continuations/jquery.continuations/defaults">Default Policies</a></p>
+          </div>
+          <div class="span9">
+            <h1 class="no-margin">Continuation Events</h1><hr class="header-line" />
+             <!--Title: Continuation Events -->
+<section><h4 class="section-header" id="consuming">Consuming events</h4>
+	<p>
+		You can listen for any of the events using the <code>bind</code> method on the root continuations object:
+	</p></section>
+
+<pre class="prettyprint lang-js linenums:46 prettyprinted" data-linenums="46" style=""><ol class="linenums"><li value="46" class="L5"><span class="pln">$</span><span class="pun">.</span><span class="pln">continuations</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="str">'ContinuationError'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">continuation</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span></li><li class="L6"><span class="pln">    myErrorModule</span><span class="pun">.</span><span class="pln">render</span><span class="pun">(</span><span class="pln">continuation</span><span class="pun">.</span><span class="pln">errors</span><span class="pun">);</span></li><li class="L7"><span class="pun">});</span></li></ol></pre>
+
+<p>Note: You can also bind to <code>*</code> as a wildcard to listen for all events.</p>
+
+<section><h4 class="section-header" id="ajaxstarted">AjaxStarted</h4>
+	<p>Occurs whenever a new request is started. It has a <code>correlationId</code> property containing the ID of the request.</p></section>
+
+<section><h4 class="section-header" id="ajax-completed">AjaxCompleted</h4>
+	<p>
+		Occurs whenever a request has completed. It has a <code>correlationId</code> property containing the ID of the request which can be used to correlate with the <code>AjaxStarted</code> event.
+	</p>
+	<p>
+		In order for the correlation process to work, your web framework must be made aware of the <code>X-Correlation-Id</code> header. This header is sent in the request and is expected to be in the response (in order to properly correlate).
+	</p></section>
+
+<section><h4 class="section-header" id="continuation-error">ContinuationError</h4>
+	<p>Occurs whenever a continuation is processed and the <code>error</code> property has a length greater than 0.</p></section>
+
+<section><h4 class="section-header" id="http-error">HttpError</h4>
+	<p>Occurs whenever a continuation is processed and the status code is not 200.</p></section>
+            </div>
+        </div>
+      </div>
+    </div>
+    <script src="/jquery-continuations/_content/scripts/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/prettify.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/bootstrap-prettify.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/fubudocs.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/toastr.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/twitter/bootstrap.min.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/fubudocs-tools.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/twitter/bootstrap-affix.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/topics.js" type="text/javascript"></script>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+    </p>
+    <p>
+      Powered by <a href="http://github.com/DarthFubuMVC/FubuDocs">FubuDocs</a>.
+    </p>
+    <p>
+      Code licensed under the <a target="_blank" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a>.
+    </p>
+  </div>
+</footer>
+  
+</body></html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+    <title>
+      Custom Properties | jquery.continuations
+    </title><meta charset="utf-8" />
+<meta content="FubuDocs" name="description" />
+<meta content="FubuDocs" name="author" />
+
+
+
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/sons-of-obsidian.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/toastr.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/twitter/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/twitter/bootstrap-responsive.min.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/toastr-responsive.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/fubudocs.core.css" />
+
+<link href="http://fonts.googleapis.com/css?family=Oswald:400,300" rel="stylesheet" type="text/css" media="screen" />
+  </head>
+  <body data-target=".bs-docs-sidebar" data-spy="scroll">
+    <div class="container">
+      
+      
+
+<div class="row">
+  <div class="span6">
+    <p class="logo">
+      <a title="Fubu" href="/jquery-continuations/topics"><span>Fubu</span></a>
+      <a class="project-logo" title="Conventional AJAX response processing for your JS" href="/jquery-continuations/jquery.continuations"><span>jquery.continuations</span></a>
+    </p>
+  </div>
+  <div class="span6">
+    <div class="top-header text-right">
+      <em>
+        <em><a href="https://groups.google.com/forum/?fromgroups#%21forum/fubumvc-devel">Join our vibrant mailing list</a></em>
+      </em>
+      <div class="social">
+        <a class="ico-github" href="http://github.com/DarthFubuMVC/jquery-continuations"><img src="/jquery-continuations/_content/images/github-icon.png" alt="Github" /></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="navbar" id="nav-follow">
+        <div class="navbar-inner">
+          <div class="container">
+            <ul class="nav"><li><a data-key="index" href="/jquery-continuations/jquery.continuations">jquery.continuations »</a></li><li class="active"><a data-key="custom" href="/jquery-continuations/jquery.continuations/custom">Custom Properties »</a></li></ul>
+<ul style="float:right" class="nav"><li><a title="Continuation Events" href="/jquery-continuations/jquery.continuations/events">Previous</a></li><li><a title="correlatedSubmit" href="/jquery-continuations/jquery.continuations/correlatedsubmit">Next</a></li></ul>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        
+
+        <div class="row">
+          <div class="span3 sidebar">
+            <h3 class="half-margin" style="display: none;">Topics</h3>
+            <ul class="nav nav-tabs nav-stacked affix-top" id="page-toc">
+            </ul>
+            <br />
+            <h3 class="no-margin">Next</h3>
+<p><a data-key="correlatedSubmit" href="/jquery-continuations/jquery.continuations/correlatedsubmit">correlatedSubmit</a></p>
+<h3 class="no-margin">Previous</h3>
+<p><a data-key="events" href="/jquery-continuations/jquery.continuations/events">Continuation Events</a></p>
+          </div>
+          <div class="span9">
+            <h1 class="no-margin">Custom Properties</h1><hr class="header-line" />
+             <!--Title: Custom Properties -->
+<p>
+    It can be handy to pass custom information along to your policies (metadata, jquery objects, etc.). Any options passed along are made available via the options property on the continuation.
+    Let's take a look at an example:
+</p>
+
+<pre class="prettyprint lang-js linenums:52 prettyprinted" data-linenums="52" style=""><ol class="linenums"><li value="52" class="L1"><span class="pln">$</span><span class="pun">.</span><span class="pln">ajax</span><span class="pun">({</span></li><li class="L2"><span class="pln">    url</span><span class="pun">:</span><span class="pln"> </span><span class="str">'test/something'</span><span class="pun">,</span></li><li class="L3"><span class="pln">    type</span><span class="pun">:</span><span class="pln"> </span><span class="str">'get'</span><span class="pun">,</span></li><li class="L4"><span class="pln">    options</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></li><li class="L5"><span class="pln">        el</span><span class="pun">:</span><span class="pln"> $</span><span class="pun">(</span><span class="str">'#my-element'</span><span class="pun">)</span></li><li class="L6"><span class="pln">    </span><span class="pun">},</span></li><li class="L7"><span class="pln">    continuationSuccess</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">continuation</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span></li><li class="L8"><span class="pln">        continuation</span><span class="pun">.</span><span class="pln">options</span><span class="pun">.</span><span class="pln">el</span><span class="pun">.</span><span class="pln">html</span><span class="pun">(</span><span class="str">'Hello, World'</span><span class="pun">);</span></li><li class="L9"><span class="pln">    </span><span class="pun">}</span></li><li class="L0"><span class="pun">});</span></li></ol></pre>
+
+<p>It can be beneficial to apply these options conventionally. The <code>$.continuations.continuation</code> object provides a helper
+function for matching on properties:</p>
+
+<pre class="prettyprint lang-js linenums:65 prettyprinted" data-linenums="65" style=""><ol class="linenums"><li value="65" class="L4"><span class="kwd">var</span><span class="pln"> customPropertyPolicy </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></li><li class="L5"><span class="pln">    matches</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">continuation</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span></li><li class="L6"><span class="pln">        </span><span class="kwd">return</span><span class="pln"> continuation</span><span class="pun">.</span><span class="pln">matchOnOption</span><span class="pun">(</span><span class="str">'el'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">el</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span></li><li class="L7"><span class="pln">            </span><span class="kwd">return</span><span class="pln"> el</span><span class="pun">.</span><span class="pln">size</span><span class="pun">()</span><span class="pln"> </span><span class="pun">!=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span></li><li class="L8"><span class="pln">        </span><span class="pun">});</span></li><li class="L9"><span class="pln">    </span><span class="pun">},</span></li><li class="L0"><span class="pln">    execute</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">continuation</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span></li><li class="L1"><span class="pln">        continuation</span><span class="pun">.</span><span class="pln">el</span><span class="pun">.</span><span class="pln">html</span><span class="pun">(</span><span class="str">'Hello, World'</span><span class="pun">);</span></li><li class="L2"><span class="pln">    </span><span class="pun">}</span></li><li class="L3"><span class="pun">};</span></li><li class="L4"><span class="pln"> </span></li><li class="L5"><span class="pln">$</span><span class="pun">.</span><span class="pln">continuations</span><span class="pun">.</span><span class="pln">applyPolicy</span><span class="pun">(</span><span class="pln">customPropertyPolicy</span><span class="pun">);</span></li></ol></pre>
+            </div>
+        </div>
+      </div>
+    </div>
+    <script src="/jquery-continuations/_content/scripts/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/prettify.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/bootstrap-prettify.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/fubudocs.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/toastr.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/twitter/bootstrap.min.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/fubudocs-tools.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/twitter/bootstrap-affix.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/topics.js" type="text/javascript"></script>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+    </p>
+    <p>
+      Powered by <a href="http://github.com/DarthFubuMVC/FubuDocs">FubuDocs</a>.
+    </p>
+    <p>
+      Code licensed under the <a target="_blank" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a>.
+    </p>
+  </div>
+</footer>
+  
+</body></html>

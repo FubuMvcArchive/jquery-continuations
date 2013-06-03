@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+    <title>
+      correlatedSubmit | jquery.continuations
+    </title><meta charset="utf-8" />
+<meta content="FubuDocs" name="description" />
+<meta content="FubuDocs" name="author" />
+
+
+
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/sons-of-obsidian.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/toastr.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/twitter/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/twitter/bootstrap-responsive.min.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/toastr-responsive.css" />
+<link type="text/css" rel="stylesheet" href="/jquery-continuations/_content/styles/fubudocs.core.css" />
+
+<link href="http://fonts.googleapis.com/css?family=Oswald:400,300" rel="stylesheet" type="text/css" media="screen" />
+  </head>
+  <body data-target=".bs-docs-sidebar" data-spy="scroll">
+    <div class="container">
+      
+      
+
+<div class="row">
+  <div class="span6">
+    <p class="logo">
+      <a title="Fubu" href="/jquery-continuations/topics"><span>Fubu</span></a>
+      <a class="project-logo" title="Conventional AJAX response processing for your JS" href="/jquery-continuations/jquery.continuations"><span>jquery.continuations</span></a>
+    </p>
+  </div>
+  <div class="span6">
+    <div class="top-header text-right">
+      <em>
+        <em><a href="https://groups.google.com/forum/?fromgroups#%21forum/fubumvc-devel">Join our vibrant mailing list</a></em>
+      </em>
+      <div class="social">
+        <a class="ico-github" href="http://github.com/DarthFubuMVC/jquery-continuations"><img src="/jquery-continuations/_content/images/github-icon.png" alt="Github" /></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="navbar" id="nav-follow">
+        <div class="navbar-inner">
+          <div class="container">
+            <ul class="nav"><li><a data-key="index" href="/jquery-continuations/jquery.continuations">jquery.continuations »</a></li><li class="active"><a data-key="correlatedSubmit" href="/jquery-continuations/jquery.continuations/correlatedsubmit">correlatedSubmit »</a></li></ul>
+<ul style="float:right" class="nav"><li><a title="Custom Properties" href="/jquery-continuations/jquery.continuations/custom">Previous</a></li></ul>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        
+
+        <div class="row">
+          <div class="span3 sidebar">
+            <h3 class="half-margin">Topics</h3>
+            <ul class="nav nav-tabs nav-stacked affix-top" id="page-toc">
+            <li><a href="#overview">Overview</a></li><li><a href="#exposing-form">Exposing the form for processing</a></li><li><a href="#syntax">Syntax</a></li><li><a href="#exposing-form">Exposing the form for processing</a></li><li><a href="#why">Why?</a></li></ul>
+            <br />
+            <h3 class="no-margin">Previous</h3>
+<p><a data-key="custom" href="/jquery-continuations/jquery.continuations/custom">Custom Properties</a></p>
+          </div>
+          <div class="span9">
+            <h1 class="no-margin">correlatedSubmit</h1><hr class="header-line" />
+             <!--Title: correlatedSubmit -->
+<section><h4 class="section-header" id="overview">Overview</h4>
+    <p>
+        <code>jQuery.continuations.forms.js</code> provides a new method on the jQuery object called
+        <code>correlatedSubmit</code> and is designed to work in conjunction with <code>jQuery.form.js</code>
+        and <code>jQuery.continuations.js</code>.
+    </p></section>
+
+<section><h4 class="section-header" id="exposing-form">Exposing the form for processing</h4>
+    <p>The <code>correlatedSubmit</code> method proxies the <code>ajaxSubmit</code> method that provides
+    custom properties for use in the continuation processing pipeline.</p>
+    
+    <p>
+        Like the <code>ajaxSubmit</code> method, the <code>correlatedSubmit</code> method works on a form element.
+        When the ajax request has completed, the jQuery object representing the form is appended to the continuation
+        via the <code>form</code> property. This makes the form itself available for all policies in the processing pipeline.
+    </p></section>
+
+<pre class="prettyprint lang-js linenums:86 prettyprinted" data-linenums="86" style=""><ol class="linenums"><li value="86" class="L5"><span class="pln">$</span><span class="pun">(</span><span class="str">'#theForm'</span><span class="pun">).</span><span class="pln">correlatedSubmit</span><span class="pun">({</span></li><li class="L6"><span class="pln">    continuationSuccess</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">continuation</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span></li><li class="L7"><span class="pln">        continuation</span><span class="pun">.</span><span class="pln">form</span><span class="pun">.</span><span class="pln">attr</span><span class="pun">(</span><span class="str">'id'</span><span class="pun">)</span><span class="pln"> </span><span class="pun">==</span><span class="pln"> </span><span class="str">'theForm'</span><span class="pun">;</span><span class="pln"> </span><span class="com">// true</span></li><li class="L8"><span class="pln">    </span><span class="pun">}</span></li><li class="L9"><span class="pun">});</span></li></ol></pre>
+
+<section><h4 class="section-header" id="syntax">Syntax</h4>
+    <p>The method behaves like <code>ajaxSubmit</code> and can accept the basic <code>ajax options</code>. The following are also available:</p>
+    <ul>
+        <li>continuationSuccess</li>
+        <li>continuationError</li>
+    </ul>
+    <p>The continuation callbacks behave just like they would on a standard <code>$.ajax</code> call.</p></section>
+
+<section><h4 class="section-header" id="exposing-form">Exposing the form for processing</h4>
+    <p>Any additional properties passed to <code>correlatedSubmit</code> will be used as the <code>options</code> property on the continuation.
+    For example:</p></section>
+
+<pre class="prettyprint lang-js linenums:80 prettyprinted" data-linenums="80" style=""><ol class="linenums"><li value="80" class="L9"><span class="pln">$</span><span class="pun">(</span><span class="str">'#theForm'</span><span class="pun">).</span><span class="pln">correlatedSubmit</span><span class="pun">({</span></li><li class="L0"><span class="pln">    myCustomProperty</span><span class="pun">:</span><span class="pln"> </span><span class="str">'1234'</span></li><li class="L1"><span class="pun">});</span></li></ol></pre>
+
+<p>In the above example, <code>continuation.options.correlatedSubmitWithProperties</code> would be available to all policies in the pipeline.</p>
+
+<section><h4 class="section-header" id="why">Why?</h4>
+    <p>The initial use case for this was for the creation of fubuvalidation.js (another Fubu project) to 
+    conventionally display form validation. However, the power of conventionally correlating a request to its 
+    originating form can extend much further than validation.</p></section>
+            </div>
+        </div>
+      </div>
+    </div>
+    <script src="/jquery-continuations/_content/scripts/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/prettify.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/bootstrap-prettify.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/fubudocs.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/toastr.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/twitter/bootstrap.min.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/fubudocs-tools.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/twitter/bootstrap-affix.js" type="text/javascript"></script>
+<script src="/jquery-continuations/_content/scripts/topics.js" type="text/javascript"></script>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+    </p>
+    <p>
+      Powered by <a href="http://github.com/DarthFubuMVC/FubuDocs">FubuDocs</a>.
+    </p>
+    <p>
+      Code licensed under the <a target="_blank" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a>.
+    </p>
+  </div>
+</footer>
+  
+</body></html>
