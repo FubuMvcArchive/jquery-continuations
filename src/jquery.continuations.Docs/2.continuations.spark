@@ -1,0 +1,32 @@
+<!--Title: The Continuation Object -->
+<Section title="What is it?" id="what">
+	<p>The continuation object is a data structure that represents server-side responses to JSON Ajax requests. 
+	The data structure is designed to be standardized between the client and the server.</p>
+</Section>
+
+<Section title="How does that work?" id="how">
+	<p>
+		The continuation object defines several common properties. These properties are sent down by the server and processed by jquery.continuations. When the clientside continuation is created, it merges the server-sent properties into a common continuation object.
+	</p>
+	<p>
+		The common client-side continuation is designed to be extended. That is, you can define properties in addition to the baseline properties. The continuation is made public to allow for prototype usage via:
+	</p>
+</Section>
+
+<Snippet name="prototypeExample" />
+
+<Section title="Common Properties" id="common">
+	<p>
+		The common properties are:
+	</p>
+</Section>
+
+<Snippet name="defaultProperties" />
+
+<Section title="Additional Properties" id="common">
+	<p>
+		When the continuation is transformed from server-side to client-side, the following properties are added:
+	</p>
+</Section>
+
+<Snippet name="additionalProperties" />

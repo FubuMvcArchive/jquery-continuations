@@ -1,4 +1,4 @@
-﻿// jquery.continuations v1.1.0.18
+﻿// jquery.continuations v1.2.0
 //
 // Copyright (C)2011-2013 Joshua Arnold, Jeremy Miller
 // Distributed Under Apache License, Version 2.0
@@ -9,37 +9,41 @@
 
     var CORRELATION_ID = 'X-Correlation-Id';
     var policies = [];
-	
-	function theContinuation() {
+    
+    function Continuation() {
+        // SAMPLE: defaultProperties
         this.errors = [];
         this.success = false;
         this.refresh = false;
-		this.contentType = 'application/json';
+        this.contentType = 'application/json';
         this.correlationId = null;
         this.options = { };
+        // ENDSAMPLE
     }
-    theContinuation.prototype = {
-		isAjax: function() {
-			return this.contentType.indexOf('json') != -1;
-		},
-		isHtml: function() {
-			return this.contentType.indexOf('html') != -1;
-		},
-		matchOnProperty: function(prop, predicate) {
-			return typeof(this[prop]) !== 'undefined' && predicate(this[prop]);
-		},
-        isCorrelated: function () {
-			return this.matchOnProperty('correlationId', function(id) {
-				return id != null;
-			});
+    Continuation.prototype = {
+        isAjax: function() {
+            return this.contentType.indexOf('json') != -1;
         },
-		eachError: function(action) {
-			if(!this.errors) return;
-			
-			for(var i = 0; i < this.errors.length; i++) {
-				action(this.errors[i]);
-			}
-		}
+        isHtml: function() {
+            return this.contentType.indexOf('html') != -1;
+        },
+        matchOnProperty: function(prop, predicate) {
+            return typeof(this[prop]) !== 'undefined' && predicate(this[prop]);
+        },
+        matchOnOption: function(prop, predicate) {
+        },
+        isCorrelated: function () {
+            return this.matchOnProperty('correlationId', function(id) {
+                return id != null;
+            });
+        },
+        eachError: function(action) {
+            if(!this.errors) return;
+            
+            for(var i = 0; i < this.errors.length; i++) {
+                action(this.errors[i]);
+            }
+        }
     };
 
     var refreshPolicy = function () {
@@ -104,28 +108,28 @@
         },
         // Mostly public for testing
         trigger: function(topic, payload, context) {
-			if(!payload) {
-				payload = {};
-			}
-			
-			if( !this.callbacks[topic] ) {
+            if(!payload) {
+                payload = {};
+            }
+            
+            if( !this.callbacks[topic] ) {
                 this.callbacks[topic] = [];
             }
-			
-			if(!context) {
-				context = {
-					topic: topic
-				};
-			}
+            
+            if(!context) {
+                context = {
+                    topic: topic
+                };
+            }
 
             var actions = this.callbacks[topic];
             for(var i = 0; i < actions.length; i++) {
-				actions[i].call(context, payload);
+                actions[i].call(context, payload);
             }
-			
-			if(topic != '*') {
-				this.trigger('*', payload, {topic: topic});
-			}
+            
+            if(topic != '*') {
+                this.trigger('*', payload, {topic: topic});
+            }
         },
         onSuccess: function(event, response, settings) {
             var continuation = this.parseContinuation(response);
@@ -152,29 +156,30 @@
         },
         onError: function(response, settings) {
             var continuation = this.parseContinuation(response);
-			var process = true;
-			if($.isFunction(settings.continuationError)) {
-				process = !(settings.continuationError(continuation) === false);
-			}
-			
-			if(process) {
-				this.process(continuation);
-			}
+            var process = true;
+            if($.isFunction(settings.continuationError)) {
+                process = !(settings.continuationError(continuation) === false);
+            }
+            
+            if(process) {
+                this.process(continuation);
+            }
         },
         parseContinuation: function(response) {
             var continuation = new $.continuations.continuation();
             continuation.success = false;
             
-			var header = response.getResponseHeader('Content-Type');
+            var header = response.getResponseHeader('Content-Type');
             if (header && header.indexOf('json') != -1) {
                 continuation = JSON.parse(response.responseText);
             }
             
-            continuation.contentType = header;
-            continuation.response = response;
+            // SAMPLE: additionalProperties
+            continuation.contentType = header; // Content-Type HTTP header
+            continuation.response = response; // jQuery XHR object
             continuation.statusCode = response.status;
             continuation.correlationId = response.getResponseHeader('X-Correlation-Id');
-            
+            // ENDSAMPLE
             return continuation;
         },
         // Keep this public for form correlation
@@ -193,14 +198,14 @@
             policies.push(policy);
             return this;
         },
-		// Mostly for testing
-		reset: function() {
-			policies.length = 0;
-			this.setupDefaults();
+        // Mostly for testing
+        reset: function() {
+            policies.length = 0;
+            this.setupDefaults();
             this.callbacks = {};
-		},
+        },
         process: function (continuation) {
-			continuation= $.continuations.create(continuation);
+            continuation = $.continuations.create(continuation);
 
             var matchingPolicies = [];
             for (var i = 0; i < policies.length; ++i) {
@@ -248,11 +253,13 @@
 
     // Exports
     $.continuations = module;
-    $.continuations.fn = continuations.prototype;
-	$.continuations.continuation = theContinuation;
-	$.continuations.create = function(values) {
-		var continuation = new theContinuation();
-		return $.extend(true, continuation, values);
-	};
+    
+    $.continuations.continuation = Continuation;
+    $.continuations.fn = Continuation.prototype;
+    
+    $.continuations.create = function(values) {
+        var continuation = new Continuation();
+        return $.extend(true, continuation, values);
+    };
 
 } (jQuery));

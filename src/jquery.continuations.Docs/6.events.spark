@@ -1,0 +1,31 @@
+<!--Title: Continuation Events -->
+<Section title="Consuming events" id="consuming">
+	<p>
+		You can listen for any of the events using the <code>bind</code> method on the root continuations object:
+	</p>
+</Section>
+
+<Snippet name="bindExample" />
+
+<p>Note: You can also bind to <code>*</code> as a wildcard to listen for all events.</p>
+
+<Section title="AjaxStarted" id="ajaxstarted">
+	<p>Occurs whenever a new request is started. It has a <code>correlationId</code> property containing the ID of the request.</p>
+</Section>
+
+<Section title="AjaxCompleted" id="ajax-completed">
+	<p>
+		Occurs whenever a request has completed. It has a <code>correlationId</code> property containing the ID of the request which can be used to correlate with the <code>AjaxStarted</code> event.
+	</p>
+	<p>
+		In order for the correlation process to work, your web framework must be made aware of the <code>X-Correlation-Id</code> header. This header is sent in the request and is expected to be in the response (in order to properly correlate).
+	</p>
+</Section>
+
+<Section title="ContinuationError" id="continuation-error">
+	<p>Occurs whenever a continuation is processed and the <code>error</code> property has a length greater than 0.</p>
+</Section>
+
+<Section title="HttpError" id="http-error">
+	<p>Occurs whenever a continuation is processed and the status code is not 200.</p>
+</Section>

@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jquery.continuations", "jquery.continuations\jquery.continuations.csproj", "{93F50EAF-6763-43B9-BD6B-F4CC604156E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jquery.continuations.Docs", "jquery.continuations.Docs\jquery.continuations.Docs.csproj", "{40059ECF-F276-4826-B189-62C6CBA22BCA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,21 @@ Global
 		{93F50EAF-6763-43B9-BD6B-F4CC604156E0}.Retail|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{93F50EAF-6763-43B9-BD6B-F4CC604156E0}.Retail|Mixed Platforms.Build.0 = Release|Any CPU
 		{93F50EAF-6763-43B9-BD6B-F4CC604156E0}.Retail|x86.ActiveCfg = Release|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Release|x86.ActiveCfg = Release|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Retail|Any CPU.ActiveCfg = Release|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Retail|Any CPU.Build.0 = Release|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Retail|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Retail|Mixed Platforms.Build.0 = Release|Any CPU
+		{40059ECF-F276-4826-B189-62C6CBA22BCA}.Retail|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

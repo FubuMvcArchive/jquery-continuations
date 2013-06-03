@@ -1,0 +1,39 @@
+<!--Title: The Continuation Pipeline -->
+<Section title="Overview" id="overview">
+	<p>jQuery.continuations provides a pipeline for processing continuations. The pipeline is orchestrated by composable policies.</p>
+</Section>
+
+<Section title="Successful responses" id="successful">
+	<p>When an ajax request is processed, jquery.continuations uses a global AJAX handler that is registered via the global $.ajaxSend hook. 
+	The handler parses the server-side continuation, takes care of any callbacks (explained later), and then hands off the continuation 
+	to the processing pipeline.</p>
+</Section>
+
+<Snippet name="prototypeExample" />
+
+<Section title="One-off success handlers" id="one-off">
+	<p>
+		Often times it's useful to supply a one-off callback for a particular AJAX request but have the pipeline still get invoked. 
+		For these scenarios, a <code>continuationSuccess</code> callback can be supplied to the standard set of <code>$.ajax</code> options. 
+		Here is a simple example:
+	</p>
+</Section>
+
+<Snippet name="continuationSuccessExample" />
+
+<Section title="HTTP errors" id="errors">
+	<p>Like the success processor, a global error handler is registered via the global <code>$.ajaxError</code> hook. 
+	This handler does one of two things: 1. If the content-type of the response is JSON, then it assumes that the server sent a 
+	continuation. It then parses it and hands it off to the processing pipeline. 2. If the content-type of the response is not JSON, 
+	then a client-side continuation is constructed to represent the error (e.g., 301) and handed off to the processing pipeline.</p>
+</Section>
+
+<Section title="One-off error handlers" id="one-off-errors">
+	<p>
+		Again, it's often useful to supply one-off handlers for particular requests but still get the power of the conventional 
+		processing. For these scenarios, a <code>continuationError</code> callback can be supplied to the standard set of <code>$.ajax</code> options. 
+		Here is a simple example:
+	</p>
+</Section>
+
+<Snippet name="continuationErrorExample" />

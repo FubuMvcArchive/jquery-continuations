@@ -1,0 +1,30 @@
+<!--Title: The Continuation Policy -->
+<Section title="Overview" id="overview">
+	<p>
+		Continuation policies are objects that are invoked during the Continuation Pipeline. They conform to a simple data structure that requires two methods:
+	</p>
+	<ol>
+		<li>matches(continuation) : bool</li>
+		<li>execute(continuation) : void</li>
+	</ol>
+</Section>
+
+<Section title="matches" id="matches">
+	<p>This function is used to evaluate whether the policy applies to the continuation by returning true or false.</p>
+</Section>
+
+<Snippet name="matchesExample" />
+
+<Section title="execute" id="execute">
+	<p>This function is used to perform anything and everything using the continuation. It is only invoked when matche function returns true.</p>
+</Section>
+
+<Snippet name="executeExample" />
+
+<Section title="Registration" id="registration">
+	<p>Registering policies is nice and simple:</p>
+</Section>
+
+<Snippet name="registrationExample" />
+
+<p>In the next section, we'll take a look at the default policies.</p>

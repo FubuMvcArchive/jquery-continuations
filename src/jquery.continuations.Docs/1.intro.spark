@@ -1,0 +1,13 @@
+<!--Title: Introduction -->
+<Section title="First things first" id="first">
+	<p>The first thing you need to know is what an Ajax Continuation is. You can read about them in the next section: <LinkTopic name="continuations" />
+    </p> 
+</Section>
+
+<Section title="The pipeline" id="pipeline">
+	<p>
+		The continuation objects are processed by what we call our "pipeline" of policies. It tends to make more sense if you read about the pipeline before the policies themselves. Read more: <LinkTopic name="pipeline" />
+	</p>
+</Section>
+
+<p>Continue reading through each section to learn how to create/register your own policies and some of the more advanced topics and usages.</p>

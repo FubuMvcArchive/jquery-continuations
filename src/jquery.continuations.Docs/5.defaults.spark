@@ -1,0 +1,41 @@
+<!--Title: Default Policies -->
+<Section title="Overview" id="overview">
+	<p>
+		The following policies are registered by default:
+	</p>
+</Section>
+
+<Section title="refreshPolicy" id="refresh">
+	<blockquote>matches when the refresh property is true</blockquote>
+	<p class="half-margin">Invokes the <code>$.continuations.windowService.refresh()</code> method to refresh the browser. This is mostly useful during development.</p>
+</Section>
+
+<Section title="navigatePolicy" id="navigate">
+	<blockquote>matches when the url property is set</blockquote>
+	<p class="half-margin">
+		Invokes the <code>$.continuations.windowService.navigateTo()</code> method to change the location of the page (i.e., location.assign) for client-side redirects.
+	</p>
+</Section>
+
+<Section title="redirectPolicy" id="redirect">
+	<blockquote>matches when the statusCode is not 200 and the Location header is set</blockquote>
+	<p class="half-margin">
+		nvokes the <code>$.continuations.windowService.navigateTo()</code> method to change the location of the page (i.e., location.assign) for client-side redirects.
+
+		This differs from the <code>navigatePolicy</code> by using the HTTP headers versus explicit properties on the continuation.
+	</p>
+</Section>
+
+<Section title="errorPolicy" id="error">
+	<blockquote>matches when the error collection is not empty</blockquote>
+	<p class="half-margin">
+		Triggers the <code>ContinuationError</code> event.
+	</p>
+</Section>
+
+<Section title="httpErrorPolicy" id="http-errors">
+	<blockquote>matches when the statusCode is not 200</blockquote>
+	<p class="half-margin">
+		Triggers the <code>HttpError</code> event.
+	</p>
+</Section>

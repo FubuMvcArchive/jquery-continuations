@@ -25,3 +25,5 @@ results
 chromedriver.log
 logs
 Gemfile.lock
+bin/
+src/jquery.continuations.Docs/pak-WebContent.zip

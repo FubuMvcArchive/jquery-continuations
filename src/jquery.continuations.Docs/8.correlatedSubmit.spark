@@ -1,0 +1,45 @@
+<!--Title: correlatedSubmit -->
+<Section title="Overview" id="overview">
+    <p>
+        <code>jQuery.continuations.forms.js</code> provides a new method on the jQuery object called
+        <code>correlatedSubmit</code> and is designed to work in conjunction with <code>jQuery.form.js</code>
+        and <code>jQuery.continuations.js</code>.
+    </p>
+</Section>
+
+<Section title="Exposing the form for processing" id="exposing-form">
+    <p>The <code>correlatedSubmit</code> method proxies the <code>ajaxSubmit</code> method that provides
+    custom properties for use in the continuation processing pipeline.</p>
+    
+    <p>
+        Like the <code>ajaxSubmit</code> method, the <code>correlatedSubmit</code> method works on a form element.
+        When the ajax request has completed, the jQuery object representing the form is appended to the continuation
+        via the <code>form</code> property. This makes the form itself available for all policies in the processing pipeline.
+    </p>
+</Section>
+
+<Snippet name="correlatedSubmit" />
+
+<Section title="Syntax" id="syntax">
+    <p>The method behaves like <code>ajaxSubmit</code> and can accept the basic <code>ajax options</code>. The following are also available:</p>
+    <ul>
+        <li>continuationSuccess</li>
+        <li>continuationError</li>
+    </ul>
+    <p>The continuation callbacks behave just like they would on a standard <code>$.ajax</code> call.</p>
+</Section>
+
+<Section title="Exposing the form for processing" id="exposing-form">
+    <p>Any additional properties passed to <code>correlatedSubmit</code> will be used as the <code>options</code> property on the continuation.
+    For example:</p>
+</Section>
+
+<Snippet name="correlatedSubmitWithProperties" />
+
+<p>In the above example, <code>continuation.options.correlatedSubmitWithProperties</code> would be available to all policies in the pipeline.</p>
+
+<Section title="Why?" id="why">
+    <p>The initial use case for this was for the creation of fubuvalidation.js (another Fubu project) to 
+    conventionally display form validation. However, the power of conventionally correlating a request to its 
+    originating form can extend much further than validation.</p>
+</Section>

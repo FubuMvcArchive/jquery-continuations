@@ -1,0 +1,12 @@
+<!--Title: Custom Properties -->
+<p>
+    It can be handy to pass custom information along to your policies (metadata, jquery objects, etc.). Any options passed along are made available via the options property on the continuation.
+    Let's take a look at an example:
+</p>
+
+<Snippet name="propertiesExample" />
+
+<p>It can be beneficial to apply these options conventionally. The <code>$.continuations.continuation</code> object provides a helper
+function for matching on properties:</p>
+
+<Snippet name="matchOnOption" />
