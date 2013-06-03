@@ -31,6 +31,11 @@
             return typeof(this[prop]) !== 'undefined' && predicate(this[prop]);
         },
         matchOnOption: function(prop, predicate) {
+            if(typeof(predicate) != 'function') {
+                predicate = function() { return true; };
+            }
+            
+            return typeof(this.options[prop]) !== 'undefined' && predicate(this.options[prop]);
         },
         isCorrelated: function () {
             return this.matchOnProperty('correlationId', function(id) {

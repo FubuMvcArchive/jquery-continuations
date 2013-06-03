@@ -770,6 +770,20 @@ describe('continuation tester', function() {
 		theContinuation.correlationId = '123';
 		expect(theContinuation.isCorrelated()).toEqual(true);
 	});
+    
+    it('matching on options', function() {
+        theContinuation.options.myProperty = '123';
+        var match = theContinuation.matchOnOption('myProperty', function(x) { return x == '123' });
+        
+        expect(match).toEqual(true);
+    });
+    
+    it('matching on options (negative)', function() {
+        theContinuation.options.myProperty = '123';
+        var match = theContinuation.matchOnOption('myProperty', function(x) { return x == '345' });
+        
+        expect(match).toEqual(false);
+    });
 });
 
 // And now for the error handling
