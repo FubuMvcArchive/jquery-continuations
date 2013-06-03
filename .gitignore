@@ -23,3 +23,5 @@ src/*/repositories.config
 .bottle-alias
 results
 chromedriver.log
+logs
+Gemfile.lock
