@@ -1,5 +1,5 @@
 ﻿// SAMPLE: prototypeExample
-$.continuations.fn.myPropertyExists = function () {
+$fubucontinuations.fn.myPropertyExists = function () {
   return typeof(this['someProperty']) != 'undefined';
 };
 // ENDSAMPLE
@@ -39,11 +39,11 @@ execute: function(continuation) {
 // ENDSAMPLE
 
 // SAMPLE: registrationExample
-$.continuations.applyPolicy(myPolicy);
+$fubucontinuations.applyPolicy(myPolicy);
 // ENDSAMPLE
 
 // SAMPLE: bindExample
-$.continuations.bind('ContinuationError', function(continuation) {
+$fubucontinuations.bind('ContinuationError', function(continuation) {
     myErrorModule.render(continuation.errors);
 });
 // ENDSAMPLE
@@ -73,7 +73,7 @@ var customPropertyPolicy = {
     }
 };
 
-$.continuations.applyPolicy(customPropertyPolicy);
+$fubucontinuations.applyPolicy(customPropertyPolicy);
 // ENDSAMPLE
 
 // SAMPLE: correlatedSubmitWithProperties

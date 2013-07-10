@@ -42,16 +42,22 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="content\scripts\jquery.continuations.amplify.js" />
-    <Content Include="content\scripts\jquery.continuations.forms.js" />
-    <Content Include="content\scripts\jquery.continuations.js" />
+    <Content Include="content\scripts\fubucontinuations.angular.js" />
+    <Content Include="content\scripts\fubucontinuations.jquery.js" />
+    <Content Include="content\scripts\fubucontinuations.js" />
+    <Content Include="content\scripts\fubucontinuations.amplify.js" />
+    <Content Include="content\scripts\fubucontinuations.jquery.forms.js" />
     <Content Include="content\scripts\lib\amplify.core.min.js" />
+    <Content Include="content\scripts\lib\angular-mocks.js" />
+    <Content Include="content\scripts\lib\angular.js" />
     <Content Include="content\scripts\lib\jquery-1.8.2.min.js" />
     <Content Include="content\scripts\lib\jquery.form.js" />
     <Content Include="content\scripts\lib\sinon-1.2.0.js" />
-    <Content Include="content\scripts\specs\jquery.continuations.amplify.spec.js" />
-    <Content Include="content\scripts\specs\jquery.continuations.forms.spec.js" />
-    <Content Include="content\scripts\specs\jquery.continuations.spec.js" />
+    <Content Include="content\scripts\specs\fubucontinuations.angular.spec.js" />
+    <Content Include="content\scripts\specs\fubucontinuations.spec.js" />
+    <Content Include="content\scripts\specs\fubucontinuations.amplify.spec.js" />
+    <Content Include="content\scripts\specs\fubucontinuations.jquery.forms.spec.js" />
+    <Content Include="content\scripts\specs\fubucontinuations.jquery.spec.js" />
   </ItemGroup>
   <ItemGroup>
     <None Include="continuations.script.config" />

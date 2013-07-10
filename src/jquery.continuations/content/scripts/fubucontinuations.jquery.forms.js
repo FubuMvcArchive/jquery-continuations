@@ -1,0 +1,50 @@
+// fubucontinuations.jquery.forms.js v2.0.0
+//
+// Copyright (C)2011-2013 Joshua Arnold, Jeremy Miller
+// Distributed Under Apache License, Version 2.0
+//
+// https://github.com/DarthFubuMVC/jquery-continuations
+
+(function ($) {
+
+  $.fn.correlatedSubmit = function (options) {
+    if (typeof (options) === 'undefined') {
+      options = {};
+    }
+
+    return this.each(function () {
+      var self = $(this);
+      var correlationId = options.correlationId;
+      if (typeof (correlationId) === 'undefined') {
+        var id = self.attr('id');
+        if (!id) {
+          id = 'form_' + new Date().getTime().toString();
+          self.attr('id', id);
+        }
+
+        correlationId = id;
+      }
+
+      self.ajaxSubmit({
+        correlationId: correlationId,
+        continuationSuccess: function (continuation) {
+          continuation.form = self;
+          continuation.options = options;
+
+          if ($.isFunction(options.continuationSuccess)) {
+            options.continuationSuccess(continuation);
+          }
+        },
+        continuationError: function (continuation) {
+          continuation.form = self;
+          continuation.options = options;
+
+          if ($.isFunction(options.continuationError)) {
+            options.continuationError(continuation);
+          }
+        }
+      });
+    });
+  };
+
+}(jQuery));
