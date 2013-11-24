@@ -27,4 +27,5 @@ logs
 Gemfile.lock
 bin/
 src/jquery.continuations.Docs/pak-WebContent.zip
+src/jquery.continuations.Docs/snippets
 docs

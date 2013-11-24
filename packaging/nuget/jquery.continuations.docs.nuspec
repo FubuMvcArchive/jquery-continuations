@@ -15,6 +15,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\..\src\jquery.continuations.Docs\bin\Release\jquery.continuations.Docs.*" target="lib\net40" />
+    <file src="..\..\src\jquery.continuations.Docs\bin\Debug\jquery.continuations.Docs.*" target="lib\net40" />
   </files>
 </package>
